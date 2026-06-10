@@ -60,7 +60,6 @@ body:has(.about-page-new) .navbar .theme-toggle {
   margin-bottom: 24px;
   letter-spacing: -0.04em;
   line-height: 1.1;
-  text-transform: uppercase;
 }
 .about-title span {
   color: #FF0000 !important;
