@@ -6,7 +6,6 @@ import Footer from './components/layout/Footer'
 import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
-import ContactPage from './pages/ContactPage'
 import HowItWorksPage from './pages/HowItWorksPage'
 import CollegesPage from './pages/CollegesPage'
 import FAQPage from './pages/FAQPage'
@@ -41,7 +40,6 @@ function AppRoutes() {
         <Route path="/" element={<Layout><LandingPage /></Layout>} />
         <Route path="/home" element={<Layout><HomePage /></Layout>} />
         <Route path="/about" element={<Layout><AboutPage /></Layout>} />
-        <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
         <Route path="/how-it-works" element={<Layout><HowItWorksPage /></Layout>} />
         <Route path="/colleges" element={<Layout><CollegesPage /></Layout>} />
         <Route path="/faq" element={<Layout><FAQPage /></Layout>} />
