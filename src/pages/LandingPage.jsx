@@ -8,11 +8,6 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
-      {/* Decorative Orbs */}
-      <div className="orb orb-1"></div>
-      <div className="orb orb-2"></div>
-      <div className="orb orb-3"></div>
-
       {/* Hero Section */}
       <section className="hero">
         <div className="container hero-inner">

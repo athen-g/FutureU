@@ -23,8 +23,11 @@ function ScrollToTop() {
 function Layout({ children }) {
   return (
     <div className="page-wrapper">
+      <div className="orb orb-1"></div>
+      <div className="orb orb-2"></div>
+      <div className="orb orb-3"></div>
       <Navbar />
-      <main>{children}</main>
+      <main style={{ position: 'relative', zIndex: 1 }}>{children}</main>
       <Footer />
     </div>
   )

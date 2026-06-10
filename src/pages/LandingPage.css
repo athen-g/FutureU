@@ -5,48 +5,6 @@
   padding-bottom: 80px;
 }
 
-/* Decorative Background Orbs */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(140px);
-  z-index: 0;
-  opacity: 0.35;
-  pointer-events: none;
-  animation: floatOrb 25s infinite ease-in-out alternate;
-}
-.orb-1 {
-  top: -100px;
-  right: -100px;
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, rgba(255,0,0,0.4) 0%, rgba(255,0,0,0) 70%);
-}
-.orb-2 {
-  top: 400px;
-  left: -200px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, rgba(147,51,234,0) 70%);
-  animation-duration: 30s;
-  animation-delay: -5s;
-}
-.orb-3 {
-  bottom: 15%;
-  right: -150px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(234,88,12,0.25) 0%, rgba(234,88,12,0) 70%);
-  animation-duration: 20s;
-  animation-delay: -8s;
-}
-
-@keyframes floatOrb {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(60px, -40px) scale(1.1); }
-  100% { transform: translate(-40px, 50px) scale(0.95); }
-}
-
 /* Hero Section */
 .hero {
   position: relative;
