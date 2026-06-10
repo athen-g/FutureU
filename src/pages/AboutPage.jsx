@@ -127,7 +127,7 @@ export default function AboutPage() {
               {donationMethod === 'kofi' ? (
                 <div className="donation-details-box animate-fade-in">
                   <p>Support the project securely through Ko-fi using credit cards, PayPal, or localized mobile wallets.</p>
-                  <a href="https://ko-fi.com/athen_g" target="_blank" rel="noopener noreferrer" className="btn-minimalist" style={{ marginTop: 8 }}>
+                  <a href="https://ko-fi.com/athen_g" target="_blank" rel="noopener noreferrer" className="btn-kofi-style" style={{ marginTop: 8 }}>
                     Support on Ko-fi
                   </a>
                 </div>

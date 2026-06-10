@@ -18,7 +18,7 @@ export default function SupportModal({ onClose }) {
           try {
             window.kofiWidgetOverlay.draw('athen_g', {
               'type': 'floating-chat',
-              'floating-chat.donateButton.text': 'Support me',
+              'floating-chat.donateButton.text': 'Tip Me',
               'floating-chat.donateButton.background-color': '#e91e63',
               'floating-chat.donateButton.text-color': '#fff'
             })
@@ -32,7 +32,7 @@ export default function SupportModal({ onClose }) {
       try {
         window.kofiWidgetOverlay.draw('athen_g', {
           'type': 'floating-chat',
-          'floating-chat.donateButton.text': 'Support me',
+          'floating-chat.donateButton.text': 'Tip Me',
           'floating-chat.donateButton.background-color': '#e91e63',
           'floating-chat.donateButton.text-color': '#fff'
         })

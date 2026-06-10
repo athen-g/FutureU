@@ -100,19 +100,25 @@
   align-items: center;
   gap: 16px;
   width: 100%;
-  padding: 14px 20px;
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
+  padding: 14px 24px;
+  background: #e91e63 !important;
+  border: none !important;
+  border-radius: 30px !important;
   cursor: pointer;
   text-align: left;
   transition: all var(--transition);
-  color: var(--color-text);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.25);
 }
 .support-modal-btn:hover {
   transform: translateY(-2px);
+  background: #d81b60 !important;
+  box-shadow: 0 6px 20px rgba(233, 30, 99, 0.45);
 }
-
+.support-modal-btn svg {
+  color: #ffffff !important;
+  flex-shrink: 0;
+}
 .btn-text-wrap {
   display: flex;
   flex-direction: column;
@@ -120,37 +126,12 @@
 .btn-text-wrap strong {
   font-size: 13.5px;
   font-weight: 700;
+  color: #ffffff !important;
 }
 .btn-text-wrap span {
   font-size: 11px;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.8) !important;
   margin-top: 1px;
-}
-
-/* Specific option hover colors */
-.feedback-btn {
-  border-left: 4px solid #3b82f6;
-}
-.feedback-btn:hover {
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.04);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
-}
-.kofi-btn {
-  border-left: 4px solid #ff5e5b;
-}
-.kofi-btn:hover {
-  border-color: #ff5e5b;
-  background: rgba(255, 94, 91, 0.04);
-  box-shadow: 0 4px 12px rgba(255, 94, 91, 0.08);
-}
-.gpay-btn {
-  border-left: 4px solid #FF0000;
-}
-.gpay-btn:hover {
-  border-color: #FF0000;
-  background: rgba(255, 0, 0, 0.04);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.08);
 }
 
 .support-modal-footer {
