@@ -288,6 +288,7 @@ export default function CollegeDetailPage() {
                     <option value="cap1">CAP Round 1</option>
                     <option value="cap2">CAP Round 2</option>
                     <option value="cap3">CAP Round 3</option>
+                    <option value="cap4">CAP Round 4</option>
                   </select>
                 </div>
                 {studentPercentile && (
@@ -302,7 +303,7 @@ export default function CollegeDetailPage() {
                   <tr>
                     <th>Branch Name</th>
                     <th>Seats</th>
-                    <th>2024-25 Cutoff ({selectedCapRound === 'all' ? 'Latest' : selectedCapRound.toUpperCase()})</th>
+                    <th>2025-26 Cutoff ({selectedCapRound === 'all' ? 'Latest' : selectedCapRound.toUpperCase()})</th>
                     <th>Predicted</th>
                     {studentPercentile && <th>Your Probability</th>}
                     <th>Trend</th>
@@ -312,7 +313,7 @@ export default function CollegeDetailPage() {
                   {branches.map(branch => {
                     const hist = getHistoricalCutoffs(branch, selectedCategory, selectedCapRound)
                     const predicted = predictCutoff(hist)
-                    const prev2024 = hist.find(h => h.year === '2024-25')?.cap3
+                    const prev2025 = hist.find(h => h.year === '2025-26')?.cap3
                     const chance = studentPercentile && predicted !== null
                       ? calculateChance(studentPercentile, predicted) : null
                     const status = getChanceStatus(chance)
@@ -329,7 +330,7 @@ export default function CollegeDetailPage() {
                             <span className="branch-code">{branch.branch_code}</span>
                           </td>
                           <td>{branch.total_seats || '—'}</td>
-                          <td>{prev2024 != null ? prev2024.toFixed(2) + '%' : '—'}</td>
+                          <td>{prev2025 != null ? prev2025.toFixed(2) + '%' : '—'}</td>
                           <td>
                             {predicted != null
                               ? <strong>{predicted.toFixed(2)}%</strong>
@@ -359,7 +360,7 @@ export default function CollegeDetailPage() {
                                 <div className="hist-cutoffs">
                                   <div className="hist-title">Historical Cutoffs ({selectedCategory} - {roundLabel})</div>
                                   <div className="hist-grid">
-                                    {['2022-23','2023-24','2024-25'].map(yr => {
+                                    {['2022-23','2023-24','2024-25','2025-26'].map(yr => {
                                       const val = hist.find(h => h.year === yr)?.cap3
                                       return (
                                         <div key={yr} className="hist-cell">
@@ -558,7 +559,7 @@ export default function CollegeDetailPage() {
               <div className="info-card info-card--full">
                 <div className="info-label">Data Note</div>
                 <div className="info-val" style={{color:'var(--color-text-muted)', fontSize:13}}>
-                  Detailed information such as fees, NAAC grade, NIRF rank, placement data, and facilities will be added in future updates. All cutoff data is sourced from CET Cell Maharashtra for 2024-25.
+                  Detailed information such as fees, NAAC grade, NIRF rank, placement data, and facilities will be added in future updates. All cutoff data is sourced from CET Cell Maharashtra for 2025-26.
                 </div>
               </div>
             </div>

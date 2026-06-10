@@ -1,6 +1,17 @@
 import { decodeSeatBreakdown } from './seatMatrixColumns'
 import { getCityForCollege, getUniqueCities } from './cityMapping'
 
+// ── 2025-26 ──────────────────────────────────────────────────────────────────
+import seatMatrix2025  from '../data/2025-26/seat_matrix.json'
+import cap1Mh2025      from '../data/2025-26/cap1/mh_cutoff.json'
+import cap1Ai2025      from '../data/2025-26/cap1/ai_cutoff.json'
+import cap2Mh2025      from '../data/2025-26/cap2/mh_cutoff.json'
+import cap2Ai2025      from '../data/2025-26/cap2/ai_cutoff.json'
+import cap3Mh2025      from '../data/2025-26/cap3/mh_cutoff.json'
+import cap3Ai2025      from '../data/2025-26/cap3/ai_cutoff.json'
+import cap4Mh2025      from '../data/2025-26/cap4/mh_cutoff.json'
+import cap4Ai2025      from '../data/2025-26/cap4/ai_cutoff.json'
+
 // ── 2024-25 ──────────────────────────────────────────────────────────────────
 import seatMatrix2024  from '../data/2024-25/seat_matrix.json'
 import cap1Mh2024      from '../data/2024-25/cap1/mh_cutoff.json'
@@ -122,15 +133,16 @@ function emptyYearCutoffs() {
   return {
     cap1: { mh: {}, ai: {} },
     cap2: { mh: {}, ai: {}, diploma: {} },
-    cap3: { mh: {}, ai: {}, diploma: {} }
+    cap3: { mh: {}, ai: {}, diploma: {} },
+    cap4: { mh: {}, ai: {} }
   }
 }
 
 function buildDataIndex() {
   const index = {}
 
-  // Seed from 2024-25 seat matrix (most complete)
-  for (const college of (seatMatrix2024.colleges || [])) {
+  // Seed from 2025-26 seat matrix (newest & most complete)
+  for (const college of (seatMatrix2025.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
       index[cc] = {
@@ -159,7 +171,38 @@ function buildDataIndex() {
     }
   }
 
-  // Seed from 2023-24 seat matrix (for colleges missing from 2024-25)
+  // Seed from 2024-25 seat matrix (fallback)
+  for (const college of (seatMatrix2024.colleges || [])) {
+    const cc = migrateCode(college.college_code)
+    if (!index[cc]) {
+      index[cc] = {
+        college_code: cc, college_name: cleanCollegeName(college.college_name),
+        status: college.status || 'Unknown', is_autonomous: false, branches: {}
+      }
+    }
+    for (const [bk, branch] of Object.entries(college.branches || {})) {
+      const mbk = migrateBranchCode(bk)
+      if (index[cc].branches[mbk]) continue
+      const rawArr = branch.seat_breakdown?.['State Level']
+      index[cc].branches[mbk] = {
+        branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+        total_seats:     branch.total_seats    || 0,
+        ms_seats:        branch.ms_seats       || 0,
+        ai_seats:        branch.ai_seats       || 0,
+        minority_seats:  branch.minority_seats || 0,
+        ews_seats:       branch.ews_seats      || 0,
+        tfws_seats:      branch.tfws_seats     || 0,
+        orphan_seats:    branch.orphan_seats   || 0,
+        pwd_seats:  branch.seat_breakdown?.['PWD']?.[0] ?? 0,
+        def_seats:  branch.seat_breakdown?.['DEF']?.[0] ?? 0,
+        decoded_seats: decodeSeatBreakdown(rawArr),
+        status: 'Unknown', home_university: 'Unknown', is_autonomous: false,
+        cutoffs: {}
+      }
+    }
+  }
+
+  // Seed from 2023-24 seat matrix (fallback)
   for (const college of (seatMatrix2023.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
@@ -170,7 +213,7 @@ function buildDataIndex() {
     }
     for (const [bk, branch] of Object.entries(college.branches || {})) {
       const mbk = migrateBranchCode(bk)
-      if (index[cc].branches[mbk]) continue   // 2024-25 takes priority
+      if (index[cc].branches[mbk]) continue
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
         branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
@@ -187,7 +230,7 @@ function buildDataIndex() {
     }
   }
 
-  // Seed from 2022-23 seat matrix (for colleges missing from both 2024-25 and 2023-24)
+  // Seed from 2022-23 seat matrix (fallback)
   for (const college of (seatMatrix2022.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
@@ -198,7 +241,7 @@ function buildDataIndex() {
     }
     for (const [bk, branch] of Object.entries(college.branches || {})) {
       const mbk = migrateBranchCode(bk)
-      if (index[cc].branches[mbk]) continue   // 2024-25 or 2023-24 takes priority
+      if (index[cc].branches[mbk]) continue
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
         branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
@@ -279,6 +322,16 @@ function buildDataIndex() {
   merge(cap3Mh2024, '2024-25', 'cap3', 'mh')
   merge(cap3Ai2024, '2024-25', 'cap3', 'ai')
   merge(cap3Diploma2024, '2024-25', 'cap3', 'diploma')
+
+  // 2025-26
+  merge(cap1Mh2025, '2025-26', 'cap1', 'mh')
+  merge(cap1Ai2025, '2025-26', 'cap1', 'ai')
+  merge(cap2Mh2025, '2025-26', 'cap2', 'mh')
+  merge(cap2Ai2025, '2025-26', 'cap2', 'ai')
+  merge(cap3Mh2025, '2025-26', 'cap3', 'mh')
+  merge(cap3Ai2025, '2025-26', 'cap3', 'ai')
+  merge(cap4Mh2025, '2025-26', 'cap4', 'mh')
+  merge(cap4Ai2025, '2025-26', 'cap4', 'ai')
 
   return index
 }

@@ -128,7 +128,7 @@ export default function LandingPage() {
                 <TrendingUp size={24} />
               </div>
               <h3>Historical Cutoff Analysis</h3>
-              <p>Compare CAP Round 1, 2, and 3 cutoffs from 2022-23 to 2024-25 in a single view with interactive charts.</p>
+              <p>Compare CAP Round 1, 2, 3, and 4 cutoffs from 2022-23 to 2025-26 in a single view with interactive charts.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon-wrap bg-orange">
@@ -199,7 +199,7 @@ export default function LandingPage() {
               <div className="stat-icon-wrap">
                 <TrendingUp size={28} />
               </div>
-              <div className="stat-val">3 Years</div>
+              <div className="stat-val">4 Years</div>
               <div className="stat-lbl">Historical Trends</div>
             </div>
           </div>

@@ -42,7 +42,7 @@ export default function Footer() {
       </div>
       <div className="footer-bottom">
         <div className="container">
-          <p>© 2024-25 FutureU. All rights reserved. Data from DTE Maharashtra / CET Cell. Verify with official sources before making decisions.</p>
+          <p>© 2025-26 FutureU. All rights reserved. Data from DTE Maharashtra / CET Cell. Verify with official sources before making decisions.</p>
         </div>
       </div>
     </footer>

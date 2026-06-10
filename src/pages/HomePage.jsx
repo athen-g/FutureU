@@ -471,7 +471,7 @@ export default function HomePage() {
                 <div className="bottom-strip">
                   <div className="quick-stats">
                     <div className="qs-title">Quick Stats</div>
-                    <div className="qs-item">📅 Data: 2024-25 CAP Round cutoffs</div>
+                    <div className="qs-item">📅 Data: 2025-26 CAP Round cutoffs</div>
                     <div className="qs-item">📊 Based on historical cutoff trends</div>
                     <div className="qs-item">🏫 Covers 354+ colleges across Maharashtra</div>
                   </div>

@@ -176,7 +176,7 @@ export default function AboutPage() {
           <div className="section-content disclaimer-content">
             <p className="disclaimer-title">Important Disclaimer</p>
             <p>
-              FutureU is an independent, student-built tool for informational purposes only. Cutoff predictions and eligibility categories (Safe, Moderate, Reach, Unlikely) are simulated based on historical 2024-25 CAP round data.
+              FutureU is an independent, student-built tool for informational purposes only. Cutoff predictions and eligibility categories (Safe, Moderate, Reach, Unlikely) are simulated based on historical 2025-26 CAP round data.
             </p>
             <p>
               Cutoffs can vary dynamically based on exam difficulty, total registrations, and student choices in 2026. Candidates must always verify cutoff lists and college options with the official CET Cell / DTE Maharashtra portal before submitting their finalized option forms. FutureU is not affiliated with, endorsed by, or associated with CET Cell Maharashtra or DTE Maharashtra.

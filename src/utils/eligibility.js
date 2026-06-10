@@ -62,7 +62,7 @@ export function eligibilityBg(status) {
  * Returns array sorted oldest→newest.
  */
 export function getHistoricalCutoffs(branchData, categoryCode, capRound = 'all') {
-  const years = ['2022-23', '2023-24', '2024-25']
+  const years = ['2022-23', '2023-24', '2024-25', '2025-26']
   const result = []
   const isAi = categoryCode && categoryCode.startsWith('AI_')
   const typeKey = isAi ? 'ai' : 'mh'
@@ -71,7 +71,7 @@ export function getHistoricalCutoffs(branchData, categoryCode, capRound = 'all')
     if (!yearData) continue
     let found = null
     if (capRound === 'all') {
-      for (const cap of ['cap3', 'cap2', 'cap1']) {
+      for (const cap of ['cap4', 'cap3', 'cap2', 'cap1']) {
         const val = yearData[cap]?.[typeKey]?.[categoryCode]?.percentile
         if (val != null) { found = val; break }
       }
@@ -88,7 +88,7 @@ export function getHistoricalCutoffs(branchData, categoryCode, capRound = 'all')
  * Get historical cutoffs for chart (including nulls for missing years).
  */
 export function getCutoffHistory(branchData, categoryCode, capRound = 'all') {
-  const years = ['2022-23', '2023-24', '2024-25']
+  const years = ['2022-23', '2023-24', '2024-25', '2025-26']
   const isAi = categoryCode && categoryCode.startsWith('AI_')
   const typeKey = isAi ? 'ai' : 'mh'
   return years.map(year => {
@@ -96,7 +96,7 @@ export function getCutoffHistory(branchData, categoryCode, capRound = 'all') {
     if (!yearData) return { year, value: null }
     let found = null
     if (capRound === 'all') {
-      for (const cap of ['cap3', 'cap2', 'cap1']) {
+      for (const cap of ['cap4', 'cap3', 'cap2', 'cap1']) {
         const v = yearData[cap]?.[typeKey]?.[categoryCode]?.percentile
         if (v != null) { found = v; break }
       }
