@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Github, Mail, ExternalLink, Gift, Heart } from 'lucide-react'
+import gpayQr from '../assets/gpay-qr.jpeg'
 import './AboutPage.css'
 
 export default function AboutPage() {
@@ -135,7 +136,7 @@ export default function AboutPage() {
                 <div className="donation-details-box qr-reveal animate-fade-in">
                   <p>Scan the UPI QR code below using Google Pay (GPay) or any other UPI app to make a direct donation.</p>
                   <div className="qr-image-wrapper">
-                    <img src="/gpay-qr.jpeg" alt="GPay UPI QR Code" className="gpay-qr-img" />
+                    <img src={gpayQr} alt="GPay UPI QR Code" className="gpay-qr-img" />
                   </div>
                   <div className="upi-details">
                     <span className="upi-lbl">UPI ID</span>

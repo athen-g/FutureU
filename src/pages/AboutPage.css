@@ -341,8 +341,10 @@ body:has(.about-page-new) .navbar .nav-link:hover {
   align-items: center;
 }
 .gpay-qr-img {
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
+  max-width: 100%;
+  height: auto;
   object-fit: contain;
 }
 .upi-details {
