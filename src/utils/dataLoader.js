@@ -122,7 +122,52 @@ function migrateBranchCode(bcode) {
     cleanCode = '0' + bcode
   }
   return BRANCH_MIGRATION_MAP[cleanCode] || cleanCode
-}function cleanCollegeName(name) {
+}
+
+function cleanBranchName(name) {
+  if (!name) return name
+  let clean = name.trim()
+
+  // Remove trailing details like " G+L", " G  L", " Total", " 180 G+L", etc.
+  clean = clean.replace(/\s+(?:\d+\s+)?(?:G\s*\+?\s*L|Total)$/i, '')
+
+  // Fix missing closing parenthesis if open parenthesis exists
+  const openCount = (clean.match(/\(/g) || []).length
+  const closeCount = (clean.match(/\)/g) || []).length
+  if (openCount > closeCount) {
+    clean = clean + ')'
+  }
+
+  // Normalize spacing before parenthesis
+  clean = clean.replace(/([a-zA-Z0-9])\(/g, '$1 (')
+
+  // Normalize spacing before brackets
+  clean = clean.replace(/([a-zA-Z0-9])\[/g, '$1 [')
+
+  // Normalize spaces
+  clean = clean.replace(/\s+/g, ' ').trim()
+
+  // Fix known truncations & abbreviation/spelling mismatches to unify them
+  if (clean.includes('Artificial Total')) {
+    clean = clean.replace(/Artificial Total\)?/i, 'Artificial Intelligence and Machine Learning')
+  }
+  if (clean === 'Computer Science and Engineering (Artificial)') {
+    clean = 'Computer Science and Engineering (Artificial Intelligence and Machine Learning)'
+  }
+  if (clean === 'Agriculture Engineering') {
+    clean = 'Agricultural Engineering'
+  }
+  if (clean === 'Artificial Intelligence (AI) and Data Science') {
+    clean = 'Artificial Intelligence and Data Science'
+  }
+  if (clean === 'Electronics & Telecommunication Engineering' || clean === 'Electronics and Telecommunication Engg') {
+    clean = 'Electronics and Telecommunication Engineering'
+  }
+
+  return clean
+}
+
+function cleanCollegeName(name) {
   if (!name) return name
   return name.replace(/\s*CAP\s*Seats\s*:\s*\d+/i, '').trim()
 }
@@ -154,7 +199,7 @@ function buildDataIndex() {
       const mbk = migrateBranchCode(bk)
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
-        branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+        branch_code: mbk, branch_name: cleanBranchName(branch.branch_name), college_code: cc,
         total_seats:     branch.total_seats    || 0,
         ms_seats:        branch.ms_seats       || 0,
         ai_seats:        branch.ai_seats       || 0,
@@ -185,7 +230,7 @@ function buildDataIndex() {
       if (index[cc].branches[mbk]) continue
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
-        branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+        branch_code: mbk, branch_name: cleanBranchName(branch.branch_name), college_code: cc,
         total_seats:     branch.total_seats    || 0,
         ms_seats:        branch.ms_seats       || 0,
         ai_seats:        branch.ai_seats       || 0,
@@ -216,7 +261,7 @@ function buildDataIndex() {
       if (index[cc].branches[mbk]) continue
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
-        branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+        branch_code: mbk, branch_name: cleanBranchName(branch.branch_name), college_code: cc,
         total_seats: branch.total_seats || 0, ms_seats: branch.ms_seats || 0,
         ai_seats: branch.ai_seats || 0, minority_seats: branch.minority_seats || 0,
         ews_seats: branch.ews_seats || 0, tfws_seats: branch.tfws_seats || 0,
@@ -244,7 +289,7 @@ function buildDataIndex() {
       if (index[cc].branches[mbk]) continue
       const rawArr = branch.seat_breakdown?.['State Level']
       index[cc].branches[mbk] = {
-        branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+        branch_code: mbk, branch_name: cleanBranchName(branch.branch_name), college_code: cc,
         total_seats: branch.total_seats || 0, ms_seats: branch.ms_seats || 0,
         ai_seats: branch.ai_seats || 0, minority_seats: branch.minority_seats || 0,
         ews_seats: branch.ews_seats || 0, tfws_seats: branch.tfws_seats || 0,
@@ -272,7 +317,7 @@ function buildDataIndex() {
         const mbk = migrateBranchCode(bk)
         if (!index[cc].branches[mbk]) {
           index[cc].branches[mbk] = {
-            branch_code: mbk, branch_name: branch.branch_name, college_code: cc,
+            branch_code: mbk, branch_name: cleanBranchName(branch.branch_name), college_code: cc,
             total_seats: 0, ms_seats: 0, ai_seats: 0, minority_seats: 0,
             ews_seats: 0, tfws_seats: 0, orphan_seats: 0, pwd_seats: 0, def_seats: 0,
             decoded_seats: {}, status: 'Unknown', home_university: 'Unknown',
