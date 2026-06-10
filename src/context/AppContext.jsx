@@ -5,6 +5,10 @@ const AppContext = createContext(null)
 export function AppProvider({ children }) {
   const [theme, setTheme] = useState('light')
   const [shortlist, setShortlist] = useState([]) // [{collegeCode, branchCode, collegeName, branchName}]
+  const [showSupportModal, setShowSupportModal] = useState(false)
+
+  const openSupportModal = useCallback(() => setShowSupportModal(true), [])
+  const closeSupportModal = useCallback(() => setShowSupportModal(false), [])
 
   const toggleTheme = useCallback(() => {
     setTheme(t => {
@@ -35,7 +39,8 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       theme, toggleTheme,
-      shortlist, addToShortlist, removeFromShortlist, isShortlisted, clearShortlist
+      shortlist, addToShortlist, removeFromShortlist, isShortlisted, clearShortlist,
+      showSupportModal, openSupportModal, closeSupportModal
     }}>
       {children}
     </AppContext.Provider>

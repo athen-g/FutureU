@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import { AppProvider } from './context/AppContext'
+import { AppProvider, useApp } from './context/AppContext'
 import Navbar from './components/layout/Navbar'
+import SupportModal from './components/layout/SupportModal'
 import Footer from './components/layout/Footer'
 import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
@@ -20,6 +21,19 @@ function ScrollToTop() {
 }
 
 function Layout({ children }) {
+  const { showSupportModal, openSupportModal, closeSupportModal } = useApp()
+
+  useEffect(() => {
+    const shown = sessionStorage.getItem('futureu_support_modal_shown')
+    if (!shown) {
+      const timer = setTimeout(() => {
+        openSupportModal()
+        sessionStorage.setItem('futureu_support_modal_shown', 'true')
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [openSupportModal])
+
   return (
     <div className="page-wrapper">
       <div className="orb orb-1"></div>
@@ -28,6 +42,7 @@ function Layout({ children }) {
       <Navbar />
       <main style={{ position: 'relative', zIndex: 1 }}>{children}</main>
       <Footer />
+      {showSupportModal && <SupportModal onClose={closeSupportModal} />}
     </div>
   )
 }

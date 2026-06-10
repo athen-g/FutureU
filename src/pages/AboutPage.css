@@ -279,3 +279,103 @@ body:has(.about-page-new) .navbar .nav-link:hover {
     margin: 32px 0;
   }
 }
+
+/* Donation / Support section styling */
+.support-toggle-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.support-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.support-toggle-btn.active {
+  background: #FF0000 !important;
+  border-color: #FF0000 !important;
+  color: #ffffff !important;
+}
+.support-toggle-btn:hover:not(.active) {
+  border-color: var(--color-text);
+}
+
+.donation-card-transform {
+  margin-top: 8px;
+  min-height: 120px;
+}
+.donation-details-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+.qr-reveal {
+  align-items: center;
+  text-align: center;
+}
+.qr-image-wrapper {
+  background: #ffffff;
+  padding: 16px;
+  border: 1px solid #e5e5e5;
+  margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.gpay-qr-img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+.upi-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.upi-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-faint);
+}
+.upi-id {
+  font-size: 15px;
+  color: #FF0000 !important;
+  letter-spacing: 0.02em;
+}
+
+/* Minimalist fade animation */
+.animate-fade-in {
+  animation: fadeInSupport 0.3s ease-out;
+}
+@keyframes fadeInSupport {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .support-toggle-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  .support-toggle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,9 +1,27 @@
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Github, Mail, ExternalLink } from 'lucide-react'
+import { Github, Mail, ExternalLink, Gift, Heart } from 'lucide-react'
 import './AboutPage.css'
 
 export default function AboutPage() {
   usePageTitle('About')
+  const [donationMethod, setDonationMethod] = useState('kofi')
+  const location = useLocation()
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('support') === 'gpay') {
+      setDonationMethod('gpay')
+      const timer = setTimeout(() => {
+        const target = document.getElementById('donation-section')
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 400)
+      return () => clearTimeout(timer)
+    }
+  }, [location])
 
   return (
     <div className="about-page-new">
@@ -75,6 +93,56 @@ export default function AboutPage() {
               <a href="https://github.com/athen-g" target="_blank" rel="noopener noreferrer" className="btn-minimalist">
                 <Github size={16} /> View GitHub Profile
               </a>
+            </div>
+          </div>
+        </section>
+
+        <hr className="about-divider" id="donation-section" />
+
+        {/* Section: Support FutureU */}
+        <section className="about-section grid-2">
+          <div className="section-label">Support Us</div>
+          <div className="section-content">
+            <h2 className="content-heading">Help keep FutureU free and active.</h2>
+            <p>
+              FutureU is completely free, open-source, and does not run any advertisements. If the platform helped you organize your CAP preference form or analyze cutoffs, please consider supporting development and hosting costs.
+            </p>
+
+            <div className="support-toggle-container">
+              <button
+                className={`support-toggle-btn ${donationMethod === 'kofi' ? 'active' : ''}`}
+                onClick={() => setDonationMethod('kofi')}
+              >
+                <Gift size={14} /> Donate via Ko-fi
+              </button>
+              <button
+                className={`support-toggle-btn ${donationMethod === 'gpay' ? 'active' : ''}`}
+                onClick={() => setDonationMethod('gpay')}
+              >
+                <Heart size={14} /> Donate via GPay
+              </button>
+            </div>
+
+            <div className="donation-card-transform">
+              {donationMethod === 'kofi' ? (
+                <div className="donation-details-box animate-fade-in">
+                  <p>Support the project securely through Ko-fi using credit cards, PayPal, or localized mobile wallets.</p>
+                  <a href="https://ko-fi.com/athen_g" target="_blank" rel="noopener noreferrer" className="btn-minimalist" style={{ marginTop: 8 }}>
+                    Support on Ko-fi
+                  </a>
+                </div>
+              ) : (
+                <div className="donation-details-box qr-reveal animate-fade-in">
+                  <p>Scan the UPI QR code below using Google Pay (GPay) or any other UPI app to make a direct donation.</p>
+                  <div className="qr-image-wrapper">
+                    <img src="/gpay-qr.jpeg" alt="GPay UPI QR Code" className="gpay-qr-img" />
+                  </div>
+                  <div className="upi-details">
+                    <span className="upi-lbl">UPI ID</span>
+                    <strong className="upi-id">atharvanitinghule@gmail.com</strong>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

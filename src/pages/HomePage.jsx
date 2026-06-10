@@ -75,7 +75,7 @@ export default function HomePage() {
   const [hasSearched, setHasSearched] = useState(false)
   const [activeTab, setActiveTab] = useState('mh')
   const resultsRef = useRef(null)
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal } = useApp()
   usePageTitle('College Recommendations')
 
   const set = useCallback((k, v) => setFilters(f => ({ ...f, [k]: v })), [])
@@ -138,6 +138,7 @@ export default function HomePage() {
       gender: filters.gender,
       date: new Date().toLocaleDateString('en-IN'),
     })
+    openSupportModal()
   }
 
   const hasJEE = filters.jeePercentile || filters.jeeRank
