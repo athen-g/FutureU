@@ -206,48 +206,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="section testimonials-section">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Success Stories</h2>
-            <p className="section-subtitle">See how FutureU has helped students secure admission in top institutes</p>
-          </div>
-          <div className="testimonials-grid">
-            <div className="testimonial-card">
-              <div className="t-rating">⭐⭐⭐⭐⭐</div>
-              <p className="t-text">
-                "The cutoff charts for COEP Computer Science were amazingly precise. Being able to compare 2022 to 2024 trends saved me hours of manual PDF comparisons."
-              </p>
-              <div className="t-author">
-                <strong>Atharva S.</strong>
-                <span>COEP Technological University (99.78%ile)</span>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="t-rating">⭐⭐⭐⭐⭐</div>
-              <p className="t-text">
-                "The seat matrix color coding and probability calculator made options selection so clear. I locked my VJTI IT seat in CAP Round 2 exactly as predicted."
-              </p>
-              <div className="t-author">
-                <strong>Neha P.</strong>
-                <span>VJTI Mumbai (99.24%ile)</span>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="t-rating">⭐⭐⭐⭐⭐</div>
-              <p className="t-text">
-                "I was stuck choosing between PCCOE and VIT. FutureU's historical trend lines showed me that VIT CSE was a safer and better trend. It worked out perfectly!"
-              </p>
-              <div className="t-author">
-                <strong>Rohan K.</strong>
-                <span>VIT Pune (98.40%ile)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="cta-section">
         <div className="container cta-inner">
