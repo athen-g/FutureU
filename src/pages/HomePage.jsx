@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef } from 'react'
-import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
 import { eligibilityLabel, eligibilityColor, eligibilityBg } from '../utils/eligibility'
@@ -147,26 +147,72 @@ export default function HomePage() {
       {/* Hero strip */}
       <div className="home-hero">
         <div className="container home-hero-inner">
-          <div>
-            <h1>Find Your Perfect Engineering College</h1>
-            <p>Enter your exam scores and preferences to get personalized college recommendations</p>
-            <button className="btn btn-primary" onClick={() => document.getElementById('inputs-section')?.scrollIntoView({ behavior: 'smooth' })}>
-              Get Started →
-            </button>
+          <div className="home-hero-text">
+            <div className="home-hero-badge">
+              <Sparkles size={13} className="badge-spark-icon" /> CAP Preference Optimizer
+            </div>
+            <h1 className="home-hero-title">
+              Find Your Ideal <br />
+              <span>Engineering College</span>
+            </h1>
+            <p className="home-hero-tagline">Real-time MHT-CET & JEE predictive modeling</p>
+            <p className="home-hero-sub">
+              Enter your exam scores and category options below. Our regression model calculates matching likelihoods across all 350+ Maharashtra engineering institutes.
+            </p>
+            <div className="home-hero-actions">
+              <button className="btn btn-primary btn-lg" onClick={() => document.getElementById('inputs-section')?.scrollIntoView({ behavior: 'smooth' })}>
+                Configure Dashboard
+              </button>
+            </div>
           </div>
-          <div className="home-hero-img">
-            <svg viewBox="0 0 260 200" fill="none" width="100%" height="100%">
-              <rect width="260" height="200" fill="white" rx="12"/>
-              <rect x="20" y="40" width="220" height="120" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
-              <rect x="40" y="60" width="80" height="80" rx="4" fill="#FF0000" opacity="0.1"/>
-              <rect x="44" y="64" width="72" height="72" rx="3" fill="#FF0000" opacity="0.15"/>
-              <circle cx="80" cy="100" r="24" fill="#FF0000" opacity="0.2"/>
-              <path d="M68 100 L78 110 L96 88" stroke="#FF0000" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <rect x="140" y="62" width="80" height="10" rx="3" fill="#e5e7eb"/>
-              <rect x="140" y="80" width="60" height="8" rx="3" fill="#e5e7eb"/>
-              <rect x="140" y="96" width="70" height="8" rx="3" fill="#e5e7eb"/>
-              <rect x="140" y="115" width="40" height="8" rx="4" fill="#FF0000"/>
-            </svg>
+          <div className="home-hero-visual">
+            <div className="home-hero-mockup">
+              <div className="mock-header">
+                <div className="mock-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div className="mock-title">Prediction Analyzer</div>
+              </div>
+              <div className="mock-body">
+                <div className="mock-stats-grid">
+                  <div className="mock-stat-box">
+                    <span className="stat-label">Exam Score</span>
+                    <strong className="stat-value text-gradient">99.12%ile</strong>
+                  </div>
+                  <div className="mock-stat-box">
+                    <span className="stat-label">Preference List</span>
+                    <strong className="stat-value">CAP Round I</strong>
+                  </div>
+                </div>
+
+                <div className="mock-quick-filters">
+                  <span className="filter-badge active">CS / IT</span>
+                  <span className="filter-badge active">Pune</span>
+                  <span className="filter-badge active">Mumbai</span>
+                  <span className="filter-badge">Autonomous</span>
+                </div>
+
+                <div className="mock-list">
+                  <div className="mock-item glow-green">
+                    <div className="item-details">
+                      <span className="item-dte">DTE: 6271</span>
+                      <h5>PICT Pune</h5>
+                      <span className="item-branch">Computer Engineering</span>
+                    </div>
+                    <div className="item-probability safe">88% Chance</div>
+                  </div>
+
+                  <div className="mock-item glow-orange">
+                    <div className="item-details">
+                      <span className="item-dte">DTE: 3012</span>
+                      <h5>VJTI Mumbai</h5>
+                      <span className="item-branch">Information Technology</span>
+                    </div>
+                    <div className="item-probability moderate">54% Chance</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
