@@ -50,14 +50,18 @@ export function buildRankedList(filters) {
       const predicted = predictCutoff(bestHistory)
       const prev = bestHistory.length > 0 ? bestHistory[bestHistory.length - 1].cap3 : null
 
-      if (percentile != null && percentile !== '' && predicted !== null) {
+      if (predicted === null) {
+        continue
+      }
+
+      if (percentile != null && percentile !== '') {
         const studentPct = parseFloat(percentile)
         if (!isNaN(studentPct) && predicted < studentPct - 5) {
           continue
         }
       }
 
-      const status = (percentile != null && percentile !== '' && predicted !== null)
+      const status = (percentile != null && percentile !== '')
         ? classifyEligibility(parseFloat(percentile), predicted)
         : 'unknown'
       const chance = (percentile != null && percentile !== '' && predicted !== null)
