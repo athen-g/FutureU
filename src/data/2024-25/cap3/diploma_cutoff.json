@@ -1,0 +1,319 @@
+{
+    "metadata": {
+        "title": "Cut Off List for Diploma/D.Voc India Seats of CAP Round - III for the Admission to the First Year Under Graduate Technical Courses in",
+        "year": "2024-25"
+    },
+    "total_colleges": 9,
+    "total_branches": 15,
+    "colleges": [
+        {
+            "college_code": "02136",
+            "college_name": "Aditya Engineering College , Beed",
+            "branches": {
+                "0213661210": {
+                    "branch_code": "0213661210",
+                    "branch_name": "Mechanical Engineering",
+                    "college_code": "02136",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190259,
+                            "percentile": 63.41,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 4
+                        }
+                    }
+                },
+                "0213637210": {
+                    "branch_code": "0213637210",
+                    "branch_name": "",
+                    "college_code": "02136",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190348,
+                            "percentile": 60.58,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 6
+                        }
+                    }
+                },
+                "0213619110": {
+                    "branch_code": "0213619110",
+                    "branch_name": "Civil Engineering",
+                    "college_code": "02136",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190388,
+                            "percentile": 57.66,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 8
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "02254",
+            "college_name": "Vilasrao Deshmukh Foundation Group of Institutions, Latur",
+            "branches": {
+                "0225437210": {
+                    "branch_code": "0225437210",
+                    "branch_name": "",
+                    "college_code": "02254",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 189574,
+                            "percentile": 84.96,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 10
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "02282",
+            "college_name": "Aditya Education Trust's Mitthulalji Sarada Polytechnic,",
+            "branches": {
+                "0228224510": {
+                    "branch_code": "0228224510",
+                    "branch_name": "Computer Engineering",
+                    "college_code": "02282",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190020,
+                            "percentile": 68.88,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 12
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "04648",
+            "college_name": "R.V. Parankar College of Engineering & Technology, Arvi, Dist",
+            "branches": {
+                "0464829310": {
+                    "branch_code": "0464829310",
+                    "branch_name": "Electrical Engineering",
+                    "college_code": "04648",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190266,
+                            "percentile": 63.12,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 18
+                        }
+                    }
+                },
+                "0464861210": {
+                    "branch_code": "0464861210",
+                    "branch_name": "Civil Engineering",
+                    "college_code": "04648",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190400,
+                            "percentile": 56.0,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 20
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "04703",
+            "college_name": "Somayya Institute of Technology, Chandrapur",
+            "branches": {
+                "0470329310": {
+                    "branch_code": "0470329310",
+                    "branch_name": "Mechanical Engineering",
+                    "college_code": "04703",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190253,
+                            "percentile": 63.78,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 28
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "05380",
+            "college_name": "Adsul's Technical Campus, Chas Dist. Ahmednagar",
+            "branches": {
+                "0538029310": {
+                    "branch_code": "0538029310",
+                    "branch_name": "Electrical Engineering",
+                    "college_code": "05380",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190382,
+                            "percentile": 58.39,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 32
+                        }
+                    }
+                },
+                "0538061210": {
+                    "branch_code": "0538061210",
+                    "branch_name": "Artificial Intelligence and Data",
+                    "college_code": "05380",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190211,
+                            "percentile": 65.2,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 36
+                        }
+                    }
+                },
+                "0538019110": {
+                    "branch_code": "0538019110",
+                    "branch_name": "Science",
+                    "college_code": "05380",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190413,
+                            "percentile": 52.72,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 38
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "05381",
+            "college_name": "Shri. Jaykumar Rawal Institute of Technology, Dondaicha.",
+            "branches": {
+                "0538199510": {
+                    "branch_code": "0538199510",
+                    "branch_name": "Electrical Engineering",
+                    "college_code": "05381",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190207,
+                            "percentile": 65.26,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 40
+                        }
+                    }
+                },
+                "0538119110": {
+                    "branch_code": "0538119110",
+                    "branch_name": "Computer Engineering",
+                    "college_code": "05381",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190396,
+                            "percentile": 56.53,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 42
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "06757",
+            "college_name": "Yashoda Technical Campus, Wadhe, Satara.",
+            "branches": {
+                "0675737210": {
+                    "branch_code": "0675737210",
+                    "branch_name": "Computer Science and Engineering",
+                    "college_code": "06757",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 189972,
+                            "percentile": 69.77,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 46
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "college_code": "06782",
+            "college_name": "Sahakar Maharshee Shankarrao Mohite Patil Institute of",
+            "branches": {
+                "0678229310": {
+                    "branch_code": "0678229310",
+                    "branch_name": "Electrical Engineering",
+                    "college_code": "06782",
+                    "status": "Unknown",
+                    "home_university": "Unknown",
+                    "cutoffs": {
+                        "DIPLOMA_AI": {
+                            "rank": 190407,
+                            "percentile": 55.0,
+                            "stage": "III",
+                            "category_code": "DIPLOMA_AI",
+                            "category_label": "Diploma/D.Voc - All India Merit",
+                            "sr_no": 50
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
