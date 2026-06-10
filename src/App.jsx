@@ -11,6 +11,8 @@ import HowItWorksPage from './pages/HowItWorksPage'
 import CollegesPage from './pages/CollegesPage'
 import FAQPage from './pages/FAQPage'
 import CollegeDetailPage from './pages/CollegeDetailPage'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -51,6 +53,8 @@ export default function App() {
     <BrowserRouter>
       <AppProvider>
         <AppRoutes />
+        <Analytics />
+        <SpeedInsights />
       </AppProvider>
     </BrowserRouter>
   )

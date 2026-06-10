@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Fragment } from 'react'
 import { MapPin, Heart, Share2, ExternalLink, Info, ChevronRight } from 'lucide-react'
 import { getCollege, getAllColleges, getCityFromCollegeName, normalizeStatus } from '../utils/dataLoader'
 import { predictCutoff, getHistoricalCutoffs, classifyEligibility, eligibilityColor, eligibilityBg, eligibilityLabel, calculateChance, getChanceStatus, getDefaultCutoffs } from '../utils/eligibility'
@@ -320,8 +320,8 @@ export default function CollegeDetailPage() {
                     const roundLabel = selectedCapRound === 'all' ? 'Latest' : selectedCapRound.toUpperCase()
 
                     return (
-                      <>
-                        <tr key={branch.branch_code} className="branch-tr"
+                      <Fragment key={branch.branch_code}>
+                        <tr className="branch-tr"
                           onClick={() => setExpandedBranch(isExpanded ? null : branch.branch_code)}
                           style={{cursor:'pointer'}}>
                           <td className="branch-name-cell">
@@ -353,7 +353,7 @@ export default function CollegeDetailPage() {
                           </td>
                         </tr>
                         {isExpanded && (
-                          <tr key={branch.branch_code + '-exp'} className="branch-expanded">
+                          <tr className="branch-expanded">
                             <td colSpan={studentPercentile ? 6 : 5}>
                               <div className="expanded-content">
                                 <div className="hist-cutoffs">
@@ -392,7 +392,7 @@ export default function CollegeDetailPage() {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     )
                   })}
                 </tbody>

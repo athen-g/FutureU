@@ -46,8 +46,8 @@ Selecting the right engineering colleges and branches can be overwhelming. Futur
 ## 📊 Data Coverage & Verification
 
 Our database contains parsed data directly from official Maharashtra CET Cell publications:
-- **2022-23**: CAP Round 1, 2, and 3 MH & AI cutoffs
-- **2023-24**: CAP Round 1, 2, and 3 MH & AI cutoffs
+- **2022-23**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
+- **2023-24**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
 - **2024-25**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
 
 *Disclaimer: FutureU is an advisory tool. Always cross-verify details with the official [MHT-CET Admission Portal](https://cetcell.mahacet.org) before locking options in the CAP portal.*
@@ -72,5 +72,3 @@ To run the project locally on your machine, follow these steps:
    ```bash
    npm run build
    ```
-
-*Note: For detailed hosting steps and online deployment instructions, check the [setup-guide.md](setup-guide.md) file.*
