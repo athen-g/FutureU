@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback, useRef, memo } from 'react'
 import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
@@ -6,7 +6,7 @@ import { eligibilityLabel, eligibilityColor, eligibilityBg } from '../utils/elig
 import { exportPreferenceListPDF } from '../utils/exportPdf'
 import { useApp } from '../context/AppContext'
 import { Link } from 'react-router-dom'
-import { usePageTitle } from '../hooks/usePageTitle'
+import { useMeta } from '../hooks/useMeta'
 import './HomePage.css'
 
 const CATEGORIES = ['OPEN','OBC','SC','ST','SEBC','VJ','NT-B','NT-C','NT-D','EWS']
@@ -21,7 +21,7 @@ function ChanceBadge({ chance, status }) {
   )
 }
 
-function ResultRow({ row, index, onShortlist, isShortlisted }) {
+const ResultRow = memo(function ResultRow({ row, index, onShortlist, isShortlisted }) {
   return (
     <tr className={`result-row result-row--${row.eligibilityStatus}`}>
       <td className="col-sr">{index + 1}</td>
@@ -59,7 +59,7 @@ function ResultRow({ row, index, onShortlist, isShortlisted }) {
       </td>
     </tr>
   )
-}
+})
 
 const INIT = {
   percentile: '', rank: '', jeePercentile: '', jeeRank: '',
@@ -74,9 +74,14 @@ export default function HomePage() {
   const [results, setResults] = useState([])
   const [hasSearched, setHasSearched] = useState(false)
   const [activeTab, setActiveTab] = useState('mh')
+  const [visibleCount, setVisibleCount] = useState(100)
   const resultsRef = useRef(null)
   const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal } = useApp()
-  usePageTitle('College Recommendations')
+  
+  useMeta(
+    'College Recommendations',
+    'Find your perfect engineering college in Maharashtra with FutureU. Get customized MHT-CET & JEE cutoff predictions, seat matrix data, and automated preference list generation.'
+  )
 
   const set = useCallback((k, v) => setFilters(f => ({ ...f, [k]: v })), [])
   const toggleArr = useCallback((k, v) => setFilters(f => ({
@@ -105,6 +110,7 @@ export default function HomePage() {
       : []
     setResults({ mh: mhRows, ai: jeeRows })
     setHasSearched(true)
+    setVisibleCount(100)
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
   }
 
@@ -119,17 +125,18 @@ export default function HomePage() {
       sessionStorage.removeItem('futureu_pwd')
     } catch (e) {}
     setFilters(INIT); setResults([]); setHasSearched(false)
+    setVisibleCount(100)
   }
 
   const currentRows = hasSearched ? (results[activeTab] || []) : []
 
-  const handleShortlist = (row) => {
+  const handleShortlist = useCallback((row) => {
     if (isShortlisted(row.collegeCode, row.branchCode)) {
       removeFromShortlist(row.collegeCode, row.branchCode)
     } else {
       addToShortlist({ ...row, collegeName: row.collegeName, branchName: row.branchName })
     }
-  }
+  }, [isShortlisted, addToShortlist, removeFromShortlist])
 
   const handleDownloadPDF = () => {
     exportPreferenceListPDF(currentRows, {
@@ -400,8 +407,8 @@ export default function HomePage() {
               <div className="results-actions">
                 {hasJEE && (
                   <div className="tab-toggle">
-                    <button className={`tab-btn ${activeTab === 'mh' ? 'active' : ''}`} onClick={() => setActiveTab('mh')}>MH Seats</button>
-                    <button className={`tab-btn ${activeTab === 'ai' ? 'active' : ''}`} onClick={() => setActiveTab('ai')}>AI Seats</button>
+                    <button className={`tab-btn ${activeTab === 'mh' ? 'active' : ''}`} onClick={() => { setActiveTab('mh'); setVisibleCount(100); }}>MH Seats</button>
+                    <button className={`tab-btn ${activeTab === 'ai' ? 'active' : ''}`} onClick={() => { setActiveTab('ai'); setVisibleCount(100); }}>AI Seats</button>
                   </div>
                 )}
                 <button className="btn btn-primary btn-sm" onClick={handleDownloadPDF}>
@@ -445,7 +452,7 @@ export default function HomePage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.map((row, i) => (
+                      {currentRows.slice(0, visibleCount).map((row, i) => (
                         <ResultRow
                           key={`${row.collegeCode}-${row.branchCode}`}
                           row={row} index={i}
@@ -456,6 +463,14 @@ export default function HomePage() {
                     </tbody>
                   </table>
                 </div>
+
+                {currentRows.length > visibleCount && (
+                  <div className="show-more-wrap">
+                    <button className="btn btn-outline-red show-more-btn" onClick={() => setVisibleCount(prev => prev + 100)}>
+                      Show More ({currentRows.length - visibleCount} Remaining)
+                    </button>
+                  </div>
+                )}
 
                 <div className="results-bottom">
                   <div className="bottom-actions">

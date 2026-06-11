@@ -7,7 +7,7 @@ import { getRelevantCategoryCodes } from '../utils/categoryMapping'
 import { useApp } from '../context/AppContext'
 import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js'
-import { usePageTitle } from '../hooks/usePageTitle'
+import { useMeta } from '../hooks/useMeta'
 import './CollegeDetailPage.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend)
@@ -70,7 +70,17 @@ export default function CollegeDetailPage() {
   const [activeTab, setActiveTab] = useState(0)
   const [expandedBranch, setExpandedBranch] = useState(null)
   const { addToShortlist, removeFromShortlist, isShortlisted, shortlist } = useApp()
-  usePageTitle(college ? `${college.college_name} — Cutoffs & Seats` : 'College Not Found')
+
+  const city = useMemo(() => college ? getCityFromCollegeName(college.college_name, college.college_code) : '', [college])
+
+  const pageTitle = college
+    ? `${college.college_name}, ${city} — Cutoffs, Seats & Admissions`
+    : 'College Not Found'
+  const pageDescription = college
+    ? `Get 2025-26 admission cutoffs, seat matrix, branch-wise probability, and trends for ${college.college_name} in ${city}, Maharashtra on FutureU.`
+    : 'The requested college details could not be found on FutureU.'
+
+  useMeta(pageTitle, pageDescription)
 
   // Use stored student percentile from session if available
   const [studentPercentile] = useState(() => {
@@ -87,7 +97,6 @@ export default function CollegeDetailPage() {
     )
   }
 
-  const city = getCityFromCollegeName(college.college_name, college.college_code)
   const normStatus = normalizeStatus(college.status)
   const branches = Object.values(college.branches || {})
 
