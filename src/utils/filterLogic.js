@@ -1,14 +1,16 @@
 import { getRelevantCategoryCodes } from './categoryMapping'
-import { predictCutoff, classifyEligibility, getBestCategoryData, calculateChance } from './eligibility'
+import { predictCutoff, classifyEligibility, getBestCategoryData, calculateChance, convertPercentileToRank, convertRankToPercentile } from './eligibility'
 import { getAllColleges, getCityFromCollegeName, normalizeStatus } from './dataLoader'
 
 /**
- * Build ranked preference list sorted highest predicted cutoff → lowest.
+ * Build ranked preference list sorted highest predicted cutoff rank → lowest (hardest first: lowest rank numbers first).
  * This is the order students should fill their CAP form.
  */
 export function buildRankedList(filters) {
   const {
     percentile,
+    rank,
+    customInflationRate,
     category = 'OPEN',
     gender = 'Male',
     domicile = 'State Level',
@@ -29,6 +31,18 @@ export function buildRankedList(filters) {
   const allColleges = getAllColleges()
   const rows = []
 
+  // Resolve student rank and percentile
+  let studentRank = null
+  let studentPct = null
+
+  if (rank != null && rank !== '') {
+    studentRank = parseInt(rank)
+    studentPct = convertRankToPercentile(studentRank, '2026-27', customInflationRate)
+  } else if (percentile != null && percentile !== '') {
+    studentPct = parseFloat(percentile)
+    studentRank = convertPercentileToRank(studentPct, '2026-27', customInflationRate)
+  }
+
   for (const college of allColleges) {
     const city = getCityFromCollegeName(college.college_name, college.college_code)
     const normStatus = normalizeStatus(college.status)
@@ -47,25 +61,31 @@ export function buildRankedList(filters) {
       if (autonomy === 'non_autonomous' && branch.is_autonomous) continue
 
       const { bestHistory, bestCode } = getBestCategoryData(branch, categoryCodes)
-      const predicted = predictCutoff(bestHistory)
-      const prev = bestHistory.length > 0 ? bestHistory[bestHistory.length - 1].cap3 : null
+      
+      // Predict cutoff rank
+      const predictedRank = predictCutoff(bestHistory)
+      const prevRank = bestHistory.length > 0 ? bestHistory[bestHistory.length - 1].rank : null
+      const prevPercentile = bestHistory.length > 0 ? bestHistory[bestHistory.length - 1].percentile : null
 
-      if (predicted === null) {
+      if (predictedRank === null) {
         continue
       }
 
-      if (percentile != null && percentile !== '') {
-        const studentPct = parseFloat(percentile)
-        if (!isNaN(studentPct) && predicted < studentPct - 5) {
+      // Convert predicted rank back to projected percentile for display and filtering
+      const predictedPercentile = convertRankToPercentile(predictedRank, '2026-27', customInflationRate)
+
+      // Filter out colleges that are too easy (predicted cutoff percentile is more than 5% below student's score)
+      if (studentPct !== null && predictedPercentile !== null) {
+        if (predictedPercentile < studentPct - 5) {
           continue
         }
       }
 
-      const status = (percentile != null && percentile !== '')
-        ? classifyEligibility(parseFloat(percentile), predicted)
+      const status = (studentRank !== null && predictedRank !== null)
+        ? classifyEligibility(studentRank, predictedRank)
         : 'unknown'
-      const chance = (percentile != null && percentile !== '' && predicted !== null)
-        ? calculateChance(parseFloat(percentile), predicted)
+      const chance = (studentRank !== null && predictedRank !== null)
+        ? calculateChance(studentRank, predictedRank)
         : null
 
       rows.push({
@@ -77,8 +97,10 @@ export function buildRankedList(filters) {
         branchCode: branch.branch_code,
         branchName: branch.branch_name,
         totalSeats: branch.total_seats,
-        predictedCutoff: predicted,
-        previousCutoff: prev,
+        predictedRank,
+        predictedPercentile,
+        previousRank: prevRank,
+        previousPercentile: prevPercentile,
         eligibilityStatus: status,
         admissionChance: chance,
         categoryCode: bestCode,
@@ -90,11 +112,11 @@ export function buildRankedList(filters) {
     }
   }
 
-  // Sort hardest first (highest predicted cutoff → lowest)
+  // Sort hardest first (lowest predicted rank first)
   rows.sort((a, b) => {
-    const pa = a.predictedCutoff ?? -1
-    const pb = b.predictedCutoff ?? -1
-    if (Math.abs(pb - pa) > 0.0001) return pb - pa
+    const ra = a.predictedRank ?? Infinity
+    const rb = b.predictedRank ?? Infinity
+    if (ra !== rb) return ra - rb
     return a.collegeName.localeCompare(b.collegeName)
   })
 

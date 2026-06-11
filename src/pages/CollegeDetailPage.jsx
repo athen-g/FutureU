@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useState, useMemo, Fragment } from 'react'
 import { MapPin, Heart, Share2, ExternalLink, Info, ChevronRight } from 'lucide-react'
 import { getCollege, getAllColleges, getCityFromCollegeName, normalizeStatus } from '../utils/dataLoader'
-import { predictCutoff, getHistoricalCutoffs, classifyEligibility, eligibilityColor, eligibilityBg, eligibilityLabel, calculateChance, getChanceStatus, getDefaultCutoffs } from '../utils/eligibility'
+import { predictCutoff, getHistoricalCutoffs, classifyEligibility, eligibilityColor, eligibilityBg, eligibilityLabel, calculateChance, getChanceStatus, getDefaultCutoffs, convertRankToPercentile, convertPercentileToRank } from '../utils/eligibility'
 import { getRelevantCategoryCodes } from '../utils/categoryMapping'
 import { useApp } from '../context/AppContext'
 import { Line } from 'react-chartjs-2'
@@ -25,13 +25,14 @@ function StatCard({ label, value, sub }) {
 }
 
 function CutoffChart({ history, branchName, categoryCode, capRound }) {
-  if (!history || history.length < 2) return <p className="no-chart">Not enough historical data for chart</p>
+  const validHistory = (history || []).filter(h => h.rank != null);
+  if (validHistory.length < 2) return <p className="no-chart">Not enough historical data for chart</p>
   const roundText = capRound === 'all' ? 'Latest' : capRound.toUpperCase()
   const data = {
-    labels: history.map(h => h.year),
+    labels: validHistory.map(h => h.year),
     datasets: [{
-      label: `${roundText} Cutoff %ile (${categoryCode})`,
-      data: history.map(h => h.cap3),
+      label: `${roundText} Cutoff Rank (${categoryCode})`,
+      data: validHistory.map(h => h.rank),
       borderColor: '#FF0000',
       backgroundColor: 'rgba(255,0,0,0.1)',
       tension: 0.3,
@@ -39,16 +40,25 @@ function CutoffChart({ history, branchName, categoryCode, capRound }) {
       pointRadius: 5,
     }]
   }
+  const ranks = validHistory.map(h => h.rank);
+  const minRank = Math.min(...ranks);
+  const maxRank = Math.max(...ranks);
+  const padding = Math.max(100, Math.round((maxRank - minRank) * 0.1));
   const options = {
     responsive: true, plugins: { legend: { display: false } },
     scales: {
-      y: { min: Math.max(0, Math.min(...history.map(h => h.cap3)) - 2), max: 100, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { 
+        reverse: true,
+        min: Math.max(1, minRank - padding), 
+        max: maxRank + padding, 
+        grid: { color: 'rgba(0,0,0,0.05)' } 
+      },
       x: { grid: { display: false } }
     }
   }
   return (
     <div className="cutoff-chart">
-      <div className="chart-title">{branchName} — Historical Cutoff Trend</div>
+      <div className="chart-title">{branchName} — Historical Cutoff Rank Trend</div>
       <Line data={data} options={options}/>
     </div>
   )
@@ -82,9 +92,23 @@ export default function CollegeDetailPage() {
 
   useMeta(pageTitle, pageDescription)
 
+  const [inflationRate] = useState(() => {
+    try { return parseFloat(sessionStorage.getItem('futureu_inflation')) || 22.38 } catch { return 22.38 }
+  })
+
   // Use stored student percentile from session if available
   const [studentPercentile] = useState(() => {
     try { return parseFloat(sessionStorage.getItem('futureu_percentile')) || null } catch { return null }
+  })
+
+  const [studentRank] = useState(() => {
+    try {
+      const r = parseInt(sessionStorage.getItem('futureu_rank'))
+      if (!isNaN(r)) return r
+      const p = parseFloat(sessionStorage.getItem('futureu_percentile'))
+      if (!isNaN(p)) return convertPercentileToRank(p, '2026-27', inflationRate)
+      return null
+    } catch { return null }
   })
 
   if (!college) {
@@ -300,8 +324,10 @@ export default function CollegeDetailPage() {
                     <option value="cap4">CAP Round 4</option>
                   </select>
                 </div>
-                {studentPercentile && (
-                  <div className="student-score-pill">Your score: {studentPercentile} %ile</div>
+                {(studentPercentile || studentRank) && (
+                  <div className="student-score-pill">
+                    Your score: {studentRank ? `Rank: ${studentRank.toLocaleString()}` : ''} {studentPercentile ? `(${studentPercentile}%ile)` : ''}
+                  </div>
                 )}
               </div>
             </div>
@@ -321,10 +347,17 @@ export default function CollegeDetailPage() {
                 <tbody>
                   {branches.map(branch => {
                     const hist = getHistoricalCutoffs(branch, selectedCategory, selectedCapRound)
-                    const predicted = predictCutoff(hist)
-                    const prev2025 = hist.find(h => h.year === '2025-26')?.cap3
-                    const chance = studentPercentile && predicted !== null
-                      ? calculateChance(studentPercentile, predicted) : null
+                    const predictedRank = predictCutoff(hist)
+                    const predictedPercentile = predictedRank !== null
+                      ? convertRankToPercentile(predictedRank, '2026-27', inflationRate)
+                      : null
+
+                    const prevNode = hist.find(h => h.year === '2025-26')
+                    const prevRank = prevNode ? prevNode.rank : null
+                    const prevPercentile = prevNode ? prevNode.percentile : null
+
+                    const chance = studentRank && predictedRank !== null
+                      ? calculateChance(studentRank, predictedRank) : null
                     const status = getChanceStatus(chance)
                     const isExpanded = expandedBranch === branch.branch_code
                     const roundLabel = selectedCapRound === 'all' ? 'Latest' : selectedCapRound.toUpperCase()
@@ -339,13 +372,25 @@ export default function CollegeDetailPage() {
                             <span className="branch-code">{branch.branch_code}</span>
                           </td>
                           <td>{branch.total_seats || '—'}</td>
-                          <td>{prev2025 != null ? prev2025.toFixed(2) + '%' : '—'}</td>
                           <td>
-                            {predicted != null
-                              ? <strong>{predicted.toFixed(2)}%</strong>
-                              : <span style={{color:'var(--color-text-faint)'}}>—</span>}
+                            {prevRank != null ? (
+                              <div>
+                                <strong>{prevRank.toLocaleString()}</strong>
+                                <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{prevPercentile.toFixed(2)}%</div>
+                              </div>
+                            ) : '—'}
                           </td>
-                          {studentPercentile && (
+                          <td>
+                            {predictedRank != null ? (
+                              <div>
+                                <strong style={{ color: '#FF0000' }}>{predictedRank.toLocaleString()}</strong>
+                                <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{predictedPercentile.toFixed(2)}%</div>
+                              </div>
+                            ) : (
+                              <span style={{color:'var(--color-text-faint)'}}>—</span>
+                            )}
+                          </td>
+                          {studentRank && (
                             <td>
                               {chance !== null && status !== 'unknown'
                                 ? <span className="prob-badge" style={{background: eligibilityBg(status), color: eligibilityColor(status)}}>
@@ -357,30 +402,44 @@ export default function CollegeDetailPage() {
                           <td>
                             <span className="trend-icon">
                               {hist.length >= 2
-                                ? hist[hist.length-1].cap3 >= hist[hist.length-2].cap3 ? '↑' : '↓'
+                                ? hist[hist.length-1].rank <= hist[hist.length-2].rank ? '↑' : '↓'
                                 : '—'}
                             </span>
                           </td>
                         </tr>
                         {isExpanded && (
                           <tr className="branch-expanded">
-                            <td colSpan={studentPercentile ? 6 : 5}>
+                            <td colSpan={studentRank ? 6 : 5}>
                               <div className="expanded-content">
                                 <div className="hist-cutoffs">
                                   <div className="hist-title">Historical Cutoffs ({selectedCategory} - {roundLabel})</div>
                                   <div className="hist-grid">
                                     {['2022-23','2023-24','2024-25','2025-26'].map(yr => {
-                                      const val = hist.find(h => h.year === yr)?.cap3
+                                      const node = hist.find(h => h.year === yr)
                                       return (
                                         <div key={yr} className="hist-cell">
                                           <div className="hist-year">{yr} ({roundLabel})</div>
-                                          <div className="hist-val">{val != null ? val.toFixed(2) + '%' : '—'}</div>
+                                          <div className="hist-val" style={{ fontSize: '12px' }}>
+                                            {node ? (
+                                              <>
+                                                <div>Rank: {node.rank.toLocaleString()}</div>
+                                                <div style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>{node.percentile.toFixed(2)}%</div>
+                                              </>
+                                            ) : '—'}
+                                          </div>
                                         </div>
                                       )
                                     })}
                                     <div className="hist-cell">
                                       <div className="hist-year">Predicted</div>
-                                      <div className="hist-val" style={{color:'#FF0000'}}>{predicted != null ? predicted.toFixed(2) + '%' : '—'}</div>
+                                      <div className="hist-val" style={{color:'#FF0000', fontSize: '12px'}}>
+                                        {predictedRank != null ? (
+                                          <>
+                                            <div>Rank: {predictedRank.toLocaleString()}</div>
+                                            <div style={{ color: '#ea580c', fontSize: '11px' }}>{predictedPercentile.toFixed(2)}%</div>
+                                          </>
+                                        ) : '—'}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>

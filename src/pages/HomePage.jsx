@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef, memo } from 'react'
 import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
-import { eligibilityLabel, eligibilityColor, eligibilityBg } from '../utils/eligibility'
+import { eligibilityLabel, eligibilityColor, eligibilityBg, convertPercentileToRank, convertRankToPercentile, getCandidateCountForYear } from '../utils/eligibility'
 import { exportPreferenceListPDF } from '../utils/exportPdf'
 import { useApp } from '../context/AppContext'
 import { Link } from 'react-router-dom'
@@ -43,8 +43,14 @@ const ResultRow = memo(function ResultRow({ row, index, onShortlist, isShortlist
       </td>
       <td className="col-cutoff">
         <div className="cutoff-cell">
-          <span className="cutoff-pred">{row.predictedCutoff != null ? row.predictedCutoff.toFixed(2) + '%' : '—'}</span>
-          <span className="cutoff-prev">{row.previousCutoff != null ? 'Prev: ' + row.previousCutoff.toFixed(2) + '%' : ''}</span>
+          <span className="cutoff-pred text-gradient" style={{ fontWeight: 700 }}>
+            {row.predictedRank != null ? `Rank: ${row.predictedRank.toLocaleString()}` : '—'}
+            {row.predictedPercentile != null && ` (${row.predictedPercentile.toFixed(2)}%)`}
+          </span>
+          <span className="cutoff-prev">
+            {row.previousRank != null ? `Prev: ${row.previousRank.toLocaleString()}` : ''}
+            {row.previousPercentile != null && ` (${row.previousPercentile.toFixed(2)}%)`}
+          </span>
         </div>
       </td>
       <td className="col-chance"><ChanceBadge chance={row.admissionChance} status={row.eligibilityStatus}/></td>
@@ -67,14 +73,35 @@ const INIT = {
   tfws: false, ews: false, pwd: false,
   preferredBranches: [], preferredCities: [], collegeTypes: [],
   autonomy: 'all', searchQuery: '',
+  customInflationRate: 22.38,
 }
 
 export default function HomePage() {
-  const [filters, setFilters] = useState(INIT)
+  const [filters, setFilters] = useState(() => {
+    try {
+      return {
+        ...INIT,
+        percentile: sessionStorage.getItem('futureu_percentile') || '',
+        rank: sessionStorage.getItem('futureu_rank') || '',
+        category: sessionStorage.getItem('futureu_category') || 'OPEN',
+        gender: sessionStorage.getItem('futureu_gender') || 'Male',
+        domicile: sessionStorage.getItem('futureu_domicile') || 'State Level',
+        tfws: sessionStorage.getItem('futureu_tfws') === 'true',
+        ews: sessionStorage.getItem('futureu_ews') === 'true',
+        pwd: sessionStorage.getItem('futureu_pwd') === 'true',
+        customInflationRate: parseFloat(sessionStorage.getItem('futureu_inflation')) || 22.38
+      }
+    } catch (e) {
+      return INIT
+    }
+  })
   const [results, setResults] = useState([])
   const [hasSearched, setHasSearched] = useState(false)
   const [activeTab, setActiveTab] = useState('mh')
   const [visibleCount, setVisibleCount] = useState(100)
+  const [showCalc, setShowCalc] = useState(false)
+  const [calcPct, setCalcPct] = useState('')
+  const [calcRank, setCalcRank] = useState('')
   const resultsRef = useRef(null)
   const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal } = useApp()
   
@@ -91,9 +118,18 @@ export default function HomePage() {
   const allBranches = useMemo(() => getAllBranches(), [])
   const allCities = useMemo(() => getAllCities(), [])
 
+  const estimatedRank = useMemo(() => {
+    if (filters.percentile && !filters.rank) {
+      return convertPercentileToRank(filters.percentile, '2026-27', filters.customInflationRate)
+    }
+    return null
+  }, [filters.percentile, filters.rank, filters.customInflationRate])
+
   const handleSearch = () => {
     try {
       sessionStorage.setItem('futureu_percentile', filters.percentile)
+      sessionStorage.setItem('futureu_rank', filters.rank)
+      sessionStorage.setItem('futureu_inflation', filters.customInflationRate.toString())
       sessionStorage.setItem('futureu_category', filters.category)
       sessionStorage.setItem('futureu_gender', filters.gender)
       sessionStorage.setItem('futureu_domicile', filters.domicile)
@@ -106,7 +142,7 @@ export default function HomePage() {
 
     const mhRows = buildRankedList({ ...filters, type: 'mh' })
     const jeeRows = (filters.jeePercentile || filters.jeeRank)
-      ? buildRankedList({ ...filters, percentile: filters.jeePercentile, type: 'ai' })
+      ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
       : []
     setResults({ mh: mhRows, ai: jeeRows })
     setHasSearched(true)
@@ -117,6 +153,8 @@ export default function HomePage() {
   const handleReset = () => {
     try {
       sessionStorage.removeItem('futureu_percentile')
+      sessionStorage.removeItem('futureu_rank')
+      sessionStorage.removeItem('futureu_inflation')
       sessionStorage.removeItem('futureu_category')
       sessionStorage.removeItem('futureu_gender')
       sessionStorage.removeItem('futureu_domicile')
@@ -141,6 +179,7 @@ export default function HomePage() {
   const handleDownloadPDF = () => {
     exportPreferenceListPDF(currentRows, {
       percentile: filters.percentile,
+      rank: filters.rank || estimatedRank,
       category: filters.category,
       gender: filters.gender,
       date: new Date().toLocaleDateString('en-IN'),
@@ -245,8 +284,13 @@ export default function HomePage() {
                 <div className="form-group">
                   <label className="form-label">MHT-CET Rank</label>
                   <input className="form-input" type="number" min="1"
-                    placeholder="Enter your rank"
+                    placeholder={estimatedRank ? `Est: ${estimatedRank}` : "Enter your rank"}
                     value={filters.rank} onChange={e => set('rank', e.target.value)}/>
+                  {estimatedRank && (
+                    <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
+                      Rank calculated automatically: <strong>{estimatedRank}</strong> based on candidate inflation (you don't need to use the manual calculator).
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -296,6 +340,63 @@ export default function HomePage() {
                     <option>No</option><option>Yes</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Collapsible Calculator Widget */}
+              <div className="calculator-widget" style={{ marginTop: '20px', borderTop: '1px solid var(--color-divider)', paddingTop: '16px' }}>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  onClick={(e) => { e.preventDefault(); setShowCalc(prev => !prev); }}
+                  style={{ width: '100%', justifyContent: 'space-between', display: 'inline-flex' }}
+                >
+                  <span>📊 Rank & Inflation Calculator</span>
+                  <span>{showCalc ? '▲' : '▼'}</span>
+                </button>
+                
+                {showCalc && (
+                  <div className="calculator-body" style={{ marginTop: '12px', background: 'var(--color-surface)', padding: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-divider)' }}>
+                    <div className="form-group" style={{ marginBottom: '12px' }}>
+                      <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span>2026-27 Candidate Inflation Rate</span>
+                        <strong>{filters.customInflationRate}%</strong>
+                      </label>
+                      <input 
+                        type="range" min="10" max="40" step="0.1" 
+                        value={filters.customInflationRate} 
+                        onChange={e => set('customInflationRate', parseFloat(e.target.value))}
+                        style={{ width: '100%', accentColor: '#FF0000', cursor: 'pointer' }}
+                      />
+                      <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                        Projected 2026-27 Candidates: <strong>{getCandidateCountForYear('2026-27', filters.customInflationRate).toLocaleString()}</strong> (+{filters.customInflationRate}% growth)
+                      </div>
+                    </div>
+
+                    <div className="calc-converters" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div className="form-group">
+                        <label className="form-label">Percentile → Rank</label>
+                        <input 
+                          type="number" className="form-input" placeholder="Percentile" min="0" max="100" step="0.0001"
+                          value={calcPct} onChange={e => {
+                            setCalcPct(e.target.value);
+                            const r = convertPercentileToRank(e.target.value, '2026-27', filters.customInflationRate);
+                            setCalcRank(r !== null ? r.toString() : '');
+                          }}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Rank → Percentile</label>
+                        <input 
+                          type="number" className="form-input" placeholder="Rank" min="1"
+                          value={calcRank} onChange={e => {
+                            setCalcRank(e.target.value);
+                            const p = convertRankToPercentile(e.target.value, '2026-27', filters.customInflationRate);
+                            setCalcPct(p !== null ? p.toString() : '');
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

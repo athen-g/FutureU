@@ -1,30 +1,70 @@
+const CANDIDATE_COUNTS = {
+  '2022-23': 232964,
+  '2023-24': 313730,
+  '2024-25': 295577,
+  '2025-26': 422863,
+}
+
 /**
- * Predict cutoff using weighted average + trend from historical data.
- * historicalData: array of { year, cap3 } sorted ascending by year
- * More recent years get higher weight.
+ * Gets the candidate count for a specific year, projecting it for 2026-27 using inflation.
+ */
+export function getCandidateCountForYear(year, customInflationRate) {
+  if (CANDIDATE_COUNTS[year]) return CANDIDATE_COUNTS[year]
+  const baseCount = CANDIDATE_COUNTS['2025-26']
+  const rate = customInflationRate !== undefined ? parseFloat(customInflationRate) : 22.38
+  return Math.round(baseCount * (1 + rate / 100))
+}
+
+/**
+ * Converts percentile to estimated rank.
+ */
+export function convertPercentileToRank(percentile, year, customInflationRate) {
+  const p = parseFloat(percentile)
+  if (isNaN(p)) return null
+  const count = getCandidateCountForYear(year, customInflationRate)
+  return Math.round(count * (1 - p / 100)) + 1
+}
+
+/**
+ * Converts rank to estimated percentile.
+ */
+export function convertRankToPercentile(rank, year, customInflationRate) {
+  const r = parseFloat(rank)
+  if (isNaN(r)) return null
+  const count = getCandidateCountForYear(year, customInflationRate)
+  return Math.min(100, Math.max(0, parseFloat((100 * (1 - (r - 1) / count)).toFixed(4))))
+}
+
+/**
+ * Predict cutoff rank using weighted average + trend from historical ranks.
+ * historicalData: array of { year, rank } sorted ascending by year
  */
 export function predictCutoff(historicalData) {
-  const valid = (historicalData || []).filter(d => d.cap3 !== null && d.cap3 !== undefined)
+  const valid = (historicalData || []).filter(d => d.rank !== null && d.rank !== undefined)
   if (valid.length === 0) return null
-  if (valid.length === 1) return valid[0].cap3
+  if (valid.length === 1) return valid[0].rank
 
   const weights = valid.map((_, i) => i + 1)
   const totalWeight = weights.reduce((a, b) => a + b, 0)
-  const weightedAvg = valid.reduce((sum, d, i) => sum + d.cap3 * weights[i], 0) / totalWeight
+  const weightedAvg = valid.reduce((sum, d, i) => sum + d.rank * weights[i], 0) / totalWeight
 
   let trendSum = 0
-  for (let i = 1; i < valid.length; i++) trendSum += valid[i].cap3 - valid[i - 1].cap3
+  for (let i = 1; i < valid.length; i++) trendSum += valid[i].rank - valid[i - 1].rank
   const avgTrend = trendSum / (valid.length - 1)
 
-  return Math.min(100, Math.max(0, parseFloat((weightedAvg + avgTrend * 0.4).toFixed(4))))
+  return Math.max(1, Math.round(weightedAvg + avgTrend * 0.4))
 }
 
-export function calculateChance(studentPercentile, predictedCutoff) {
-  const p = parseFloat(studentPercentile)
-  if (predictedCutoff === null || predictedCutoff === undefined || isNaN(p)) return null
-  const diff = p - predictedCutoff
-  const k = 0.85
-  const chance = 100 / (1 + Math.exp(-k * diff))
+/**
+ * Calculates admission probability based on rank-based ratio power sigmoid curve.
+ */
+export function calculateChance(studentRank, predictedCutoffRank) {
+  const r = parseFloat(studentRank)
+  const c = parseFloat(predictedCutoffRank)
+  if (isNaN(r) || isNaN(c) || c <= 0 || r <= 0) return null
+  
+  const ratio = r / c
+  const chance = 100 / (1 + Math.pow(ratio, 10))
   return Math.min(99, Math.max(1, Math.round(chance)))
 }
 
@@ -36,8 +76,8 @@ export function getChanceStatus(chance) {
   return 'unlikely'
 }
 
-export function classifyEligibility(studentPercentile, predictedCutoff) {
-  const chance = calculateChance(studentPercentile, predictedCutoff)
+export function classifyEligibility(studentRank, predictedCutoffRank) {
+  const chance = calculateChance(studentRank, predictedCutoffRank)
   return getChanceStatus(chance)
 }
 
@@ -69,17 +109,26 @@ export function getHistoricalCutoffs(branchData, categoryCode, capRound = 'all')
   for (const year of years) {
     const yearData = branchData.cutoffs?.[year]
     if (!yearData) continue
-    let found = null
+    let foundNode = null
     if (capRound === 'all') {
       for (const cap of ['cap4', 'cap3', 'cap2', 'cap1']) {
-        const val = yearData[cap]?.[typeKey]?.[categoryCode]?.percentile
-        if (val != null) { found = val; break }
+        const val = yearData[cap]?.[typeKey]?.[categoryCode]
+        if (val && val.percentile != null) { foundNode = val; break }
       }
     } else {
-      const val = yearData[capRound]?.[typeKey]?.[categoryCode]?.percentile
-      if (val != null) { found = val }
+      const val = yearData[capRound]?.[typeKey]?.[categoryCode]
+      if (val && val.percentile != null) { foundNode = val }
     }
-    if (found != null) result.push({ year, cap3: found })
+    if (foundNode != null) {
+      const percentile = foundNode.percentile
+      const rank = foundNode.rank != null ? foundNode.rank : convertPercentileToRank(percentile, year)
+      result.push({
+        year,
+        percentile,
+        rank,
+        cap3: percentile // Backwards compatibility alias
+      })
+    }
   }
   return result
 }
@@ -97,14 +146,14 @@ export function getCutoffHistory(branchData, categoryCode, capRound = 'all') {
     let found = null
     if (capRound === 'all') {
       for (const cap of ['cap4', 'cap3', 'cap2', 'cap1']) {
-        const v = yearData[cap]?.[typeKey]?.[categoryCode]?.percentile
-        if (v != null) { found = v; break }
+        const v = yearData[cap]?.[typeKey]?.[categoryCode]
+        if (v && v.rank != null) { found = v; break }
       }
     } else {
-      const v = yearData[capRound]?.[typeKey]?.[categoryCode]?.percentile
-      if (v != null) { found = v }
+      const v = yearData[capRound]?.[typeKey]?.[categoryCode]
+      if (v && v.rank != null) { found = v }
     }
-    return { year, value: found }
+    return { year, value: found ? found.rank : null }
   })
 }
 
@@ -126,8 +175,6 @@ export function getBestCategoryData(branchData, categoryCodes) {
 
 /**
  * Fallback chain for default cutoff display.
- * Tries GOPENS first (State Level), then GOPENH (Home University),
- * GOPENO (Other University), then Ladies equivalents.
  * Returns { history, categoryCode } with the best available data.
  */
 const DEFAULT_OPEN_FALLBACK = [
@@ -143,7 +190,7 @@ export function getDefaultCutoffs(branchData) {
     if (hist.length > bestHistory.length) {
       bestHistory = hist
       bestCode = code
-      if (hist.length === 3) break  // found data for all 3 years, no need to keep looking
+      if (hist.length === 3) break
     }
   }
   return { history: bestHistory, categoryCode: bestCode }

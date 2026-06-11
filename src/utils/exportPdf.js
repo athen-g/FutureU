@@ -2,7 +2,7 @@ import jsPDF from 'jspdf'
 
 export function exportPreferenceListPDF(rows, studentInfo) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-  const { percentile, category, gender, date } = studentInfo
+  const { percentile, rank, category, gender, date } = studentInfo
 
   // Header
   doc.setFontSize(18)
@@ -11,20 +11,20 @@ export function exportPreferenceListPDF(rows, studentInfo) {
 
   doc.setFontSize(10)
   doc.setTextColor(80, 80, 80)
-  doc.text(`Percentile: ${percentile ?? '—'} | Category: ${category ?? '—'} | Gender: ${gender ?? '—'} | Generated: ${date ?? new Date().toLocaleDateString('en-IN')}`, 14, 24)
-  doc.text('Sorted from highest predicted cutoff (hardest) to lowest (easiest). Fill your preference form in this order.', 14, 30)
+  doc.text(`Percentile: ${percentile ?? '—'} | Rank: ${rank ?? '—'} | Category: ${category ?? '—'} | Gender: ${gender ?? '—'} | Generated: ${date ?? new Date().toLocaleDateString('en-IN')}`, 14, 24)
+  doc.text('Sorted from highest predicted cutoff rank (hardest) to lowest (easiest). Fill your preference form in this order.', 14, 30)
 
   // Table header
   const startY = 36
   const cols = [
     { header: 'Sr.', w: 10 },
     { header: 'Coll. Code', w: 22 },
-    { header: 'College Name', w: 80 },
-    { header: 'Branch Code', w: 25 },
-    { header: 'Branch Name', w: 60 },
-    { header: 'Pred. Cutoff', w: 24 },
-    { header: 'Prev. Cutoff', w: 24 },
-    { header: 'Chance', w: 24 },
+    { header: 'College Name', w: 76 },
+    { header: 'Branch Code', w: 24 },
+    { header: 'Branch Name', w: 58 },
+    { header: 'Pred. Cutoff (Rank / %)', w: 32 },
+    { header: 'Prev. Cutoff (Rank / %)', w: 32 },
+    { header: 'Chance', w: 18 },
   ]
 
   // Draw header row
@@ -55,14 +55,22 @@ export function exportPreferenceListPDF(rows, studentInfo) {
     x = 14
     doc.rect(14, y, cols.reduce((s, c) => s + c.w, 0), 6, 'F')
     doc.setTextColor(30, 30, 30)
+    
+    const predStr = row.predictedRank != null
+      ? `${row.predictedRank.toLocaleString()} (${row.predictedPercentile?.toFixed(2)}%)`
+      : '—'
+    const prevStr = row.previousRank != null
+      ? `${row.previousRank.toLocaleString()} (${row.previousPercentile?.toFixed(2)}%)`
+      : '—'
+
     const cells = [
       String(i + 1),
       row.collegeCode ?? '—',
-      row.collegeName?.length > 42 ? row.collegeName.substring(0, 42) + '…' : (row.collegeName ?? ''),
+      row.collegeName?.length > 40 ? row.collegeName.substring(0, 40) + '…' : (row.collegeName ?? ''),
       row.branchCode ?? '—',
-      row.branchName?.length > 30 ? row.branchName.substring(0, 30) + '…' : (row.branchName ?? ''),
-      row.predictedCutoff != null ? row.predictedCutoff.toFixed(2) + '%' : '—',
-      row.previousCutoff != null ? row.previousCutoff.toFixed(2) + '%' : '—',
+      row.branchName?.length > 28 ? row.branchName.substring(0, 28) + '…' : (row.branchName ?? ''),
+      predStr,
+      prevStr,
       row.admissionChance != null ? row.admissionChance + '%' : '—',
     ]
     for (let ci = 0; ci < cols.length; ci++) {
