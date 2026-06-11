@@ -4,6 +4,20 @@ import './ChangeLogPage.css'
 
 const CHANGELOG_DATA = [
   {
+    version: 'v2.3.0',
+    date: '2026-06-11',
+    description: 'Visual Layouts, Guide Timelines & SSG Pre-rendering',
+    changes: {
+      added: [
+        'Static Site Generation (SSG) Pre-rendering: Created a custom postbuild Node script (prerender.cjs) to automatically pre-render college-specific titles, Canonical links, Open Graph, and Twitter metadata tags for all 368 colleges under dist/college/[collegeCode]/index.html.',
+        'Locked Merit List Autoload Panel: Integrated a mockup autoload form panel inside the Homepage recommendations form, with a roll-number input and a locked, semi-transparent overlay explaining CET merit list releases.',
+        'CAP Admission Guide Timeline: Added a student HelpPage (/help) rendering the 10 stages of the Centralized Admission Process (CAP) with real-time status pills and official CET Cell publications links.',
+        'Mathematical Prediction Formula Displays: Updated the HowItWorksPage to detail weighted historical averaging cutoffs and logistic sigmoid probability math in clean styled equations.',
+        'Student Privacy Guarantee Section: Documented our 100% database-free client-side architecture on the AboutPage to guarantee that student ranks/scores are never collected, tracked, or sold to coaching institutes.'
+      ]
+    }
+  },
+  {
     version: 'v2.2.0',
     date: '2026-06-11',
     description: 'Background Data Loading & UI Polish',

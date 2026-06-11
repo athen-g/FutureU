@@ -4,6 +4,16 @@ All notable changes to **FutureU** will be documented in this file.
 
 ---
 
+## [v2.3.0] - 2026-06-11
+### Added
+- **Static Site Generation (SSG) Pre-rendering**: Created a custom postbuild Node script (`scripts/prerender.cjs`) to automatically pre-render specific `<title>`, Canonical links, Open Graph, and Twitter metadata tags into static `index.html` pages for all 368 colleges (located at `dist/college/[collegeCode]/index.html`), resolving client-side rendering preview limitations on WhatsApp and Telegram.
+- **Locked Merit List Autoload Panel**: Integrated a mockup autoload form panel inside the Homepage recommendations form, including an active Application ID roll-number input and a locked, semi-transparent overlay explaining CET merit list timeline releases.
+- **CAP Admission Guide Timeline**: Added a dedicated `HelpPage` (`/help`) rendering the 10 stages of the Centralized Admission Process (CAP) with real-time status pills and official CET Cell publications links.
+- **Mathematical Prediction Formula Displays**: Updated the `HowItWorksPage` to detail weighted historical averaging cutoffs and logistic sigmoid probability math in clean styled equations.
+- **Student Privacy Guarantee Section**: Documented our 100% database-free client-side architecture on the `AboutPage` to guarantee that student ranks/scores are never collected, tracked, or sold to coaching institutes.
+
+---
+
 ## [v2.2.0] - 2026-06-11
 ### Added
 - **Silent Background Loading**: Homepage and College Directory pages render instantly. Data is downloaded and compiled silently in the background via `loadAppData()` updates.
