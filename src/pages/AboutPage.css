@@ -167,6 +167,9 @@ body:has(.about-page-new) .navbar .nav-link:hover {
 }
 .dev-actions {
   margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .btn-minimalist {
   display: inline-flex;
@@ -183,9 +186,29 @@ body:has(.about-page-new) .navbar .nav-link:hover {
   letter-spacing: 0.05em;
   transition: all 0.2s ease;
 }
-.btn-minimalist:hover {
+.btn-github {
+  border-color: var(--color-text) !important;
+  color: var(--color-text) !important;
+}
+.btn-github:hover {
   background: var(--color-text) !important;
   color: var(--color-bg) !important;
+}
+.btn-linkedin {
+  border-color: #0a66c2 !important;
+  color: #0a66c2 !important;
+}
+.btn-linkedin:hover {
+  background: #0a66c2 !important;
+  color: #ffffff !important;
+}
+.btn-portfolio {
+  border-color: #FF0000 !important;
+  color: #FF0000 !important;
+}
+.btn-portfolio:hover {
+  background: #FF0000 !important;
+  color: #ffffff !important;
 }
 
 /* Contact Box Minimalist */

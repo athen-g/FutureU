@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Github, Mail, ExternalLink, Gift, Heart } from 'lucide-react'
+import { Github, Mail, ExternalLink, Gift, Heart, Linkedin, Globe } from 'lucide-react'
 import gpayQr from '../assets/gpay-qr.jpeg'
 import './AboutPage.css'
 
@@ -91,8 +91,14 @@ export default function AboutPage() {
               Atharva (<a href="https://github.com/athen-g" target="_blank" rel="noopener noreferrer" className="inline-link">@athen-g <ExternalLink size={12} /></a>) built FutureU as an open-source tool to demystify the complex MHT-CET CAP round allocation process for students. Having witnessed the confusion and anxiety that candidates face when organizing their preference forms, he consolidated multiple years of historical cutoff trends into an actionable, real-time prediction model.
             </p>
             <div className="dev-actions">
-              <a href="https://github.com/athen-g" target="_blank" rel="noopener noreferrer" className="btn-minimalist">
-                <Github size={16} /> View GitHub Profile
+              <a href="https://github.com/athen-g" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-github">
+                <Github size={16} /> GitHub Profile
+              </a>
+              <a href="https://www.linkedin.com/in/atharva-g45/" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-linkedin">
+                <Linkedin size={16} /> LinkedIn Profile
+              </a>
+              <a href="https://atharvanitinghule.tech" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-portfolio">
+                <Globe size={16} /> My Portfolio
               </a>
             </div>
           </div>
