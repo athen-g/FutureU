@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, memo } from 'react'
+import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react'
 import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
@@ -76,6 +76,31 @@ const INIT = {
   customInflationRate: 22.38,
 }
 
+function SearchTableSkeleton() {
+  return Array.from({ length: 5 }).map((_, i) => (
+    <tr key={i} className="result-row-skeleton">
+      <td className="col-sr"><div className="skeleton-circle skeleton-shimmer"></div></td>
+      <td className="col-college">
+        <div className="skeleton-line skeleton-line--long skeleton-shimmer" style={{ height: '14px', marginBottom: '8px' }}></div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '80px', height: '10px' }}></div>
+          <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '60px', height: '10px' }}></div>
+        </div>
+      </td>
+      <td className="col-branch">
+        <div className="skeleton-line skeleton-line--medium skeleton-shimmer" style={{ height: '12px', marginBottom: '6px' }}></div>
+        <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '70px', height: '9px' }}></div>
+      </td>
+      <td className="col-cutoff">
+        <div className="skeleton-line skeleton-line--medium skeleton-shimmer" style={{ height: '12px', marginBottom: '4px' }}></div>
+        <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '80px', height: '10px' }}></div>
+      </td>
+      <td className="col-chance"><div className="skeleton-badge skeleton-shimmer"></div></td>
+      <td className="col-action"><div className="skeleton-button skeleton-shimmer"></div></td>
+    </tr>
+  ))
+}
+
 export default function HomePage() {
   const [filters, setFilters] = useState(() => {
     try {
@@ -97,14 +122,19 @@ export default function HomePage() {
   })
   const [results, setResults] = useState([])
   const [hasSearched, setHasSearched] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
   const [activeTab, setActiveTab] = useState('mh')
   const [visibleCount, setVisibleCount] = useState(100)
   const [showCalc, setShowCalc] = useState(false)
   const [calcPct, setCalcPct] = useState('')
   const [calcRank, setCalcRank] = useState('')
   const resultsRef = useRef(null)
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal, isDataReady, loadAppData } = useApp()
   
+  useEffect(() => {
+    loadAppData()
+  }, [loadAppData])
+
   useMeta(
     'College Recommendations',
     'Find your perfect engineering college in Maharashtra with FutureU. Get customized MHT-CET & JEE cutoff predictions, seat matrix data, and automated preference list generation.'
@@ -115,8 +145,8 @@ export default function HomePage() {
     ...f, [k]: f[k].includes(v) ? f[k].filter(x => x !== v) : [...f[k], v]
   })), [])
 
-  const allBranches = useMemo(() => getAllBranches(), [])
-  const allCities = useMemo(() => getAllCities(), [])
+  const allBranches = useMemo(() => isDataReady ? getAllBranches() : [], [isDataReady])
+  const allCities = useMemo(() => isDataReady ? getAllCities() : [], [isDataReady])
 
   const estimatedRank = useMemo(() => {
     if (filters.percentile && !filters.rank) {
@@ -125,7 +155,7 @@ export default function HomePage() {
     return null
   }, [filters.percentile, filters.rank, filters.customInflationRate])
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     try {
       sessionStorage.setItem('futureu_percentile', filters.percentile)
       sessionStorage.setItem('futureu_rank', filters.rank)
@@ -140,14 +170,30 @@ export default function HomePage() {
       console.warn('Failed to save filters to sessionStorage', e)
     }
 
-    const mhRows = buildRankedList({ ...filters, type: 'mh' })
-    const jeeRows = (filters.jeePercentile || filters.jeeRank)
-      ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
-      : []
-    setResults({ mh: mhRows, ai: jeeRows })
     setHasSearched(true)
-    setVisibleCount(100)
+    setIsSearching(true)
+    
+    // Scroll to results section immediately to let user see the shimmering table skeleton
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+
+    const startTime = Date.now()
+
+    if (!isDataReady) {
+      await loadAppData()
+    }
+
+    const elapsed = Date.now() - startTime
+    const remainingTime = Math.max(0, 1200 - elapsed)
+
+    setTimeout(() => {
+      const mhRows = buildRankedList({ ...filters, type: 'mh' })
+      const jeeRows = (filters.jeePercentile || filters.jeeRank)
+        ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
+        : []
+      setResults({ mh: mhRows, ai: jeeRows })
+      setIsSearching(false)
+      setVisibleCount(100)
+    }, remainingTime)
   }
 
   const handleReset = () => {
@@ -186,6 +232,8 @@ export default function HomePage() {
     })
     openSupportModal()
   }
+
+  // Data loader triggers silently in the background via useEffect, so the UI is ready immediately.
 
   const hasJEE = filters.jeePercentile || filters.jeeRank
 
@@ -518,7 +566,32 @@ export default function HomePage() {
               </div>
             </div>
 
-            {currentRows.length === 0 ? (
+            {isSearching ? (
+              <>
+                <div className="results-info">
+                  <Info size={14}/>
+                  <span>Admissions probability analyzer is preparing customized recommendations...</span>
+                </div>
+
+                <div className="results-table-wrap">
+                  <table className="results-table">
+                    <thead>
+                      <tr>
+                        <th className="col-sr">#</th>
+                        <th className="col-college">College</th>
+                        <th className="col-branch">Branch</th>
+                        <th className="col-cutoff">Predicted / Prev Cutoff</th>
+                        <th className="col-chance">Chance</th>
+                        <th className="col-action"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <SearchTableSkeleton />
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : currentRows.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">🔍</div>
                 <h3>No results found</h3>

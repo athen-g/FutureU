@@ -1,45 +1,6 @@
 import { decodeSeatBreakdown } from './seatMatrixColumns'
 import { getCityForCollege, getUniqueCities } from './cityMapping'
 
-// ── 2025-26 ──────────────────────────────────────────────────────────────────
-import seatMatrix2025  from '../data/2025-26/seat_matrix.json'
-import cap1Mh2025      from '../data/2025-26/cap1/mh_cutoff.json'
-import cap1Ai2025      from '../data/2025-26/cap1/ai_cutoff.json'
-import cap2Mh2025      from '../data/2025-26/cap2/mh_cutoff.json'
-import cap2Ai2025      from '../data/2025-26/cap2/ai_cutoff.json'
-import cap3Mh2025      from '../data/2025-26/cap3/mh_cutoff.json'
-import cap3Ai2025      from '../data/2025-26/cap3/ai_cutoff.json'
-import cap4Mh2025      from '../data/2025-26/cap4/mh_cutoff.json'
-import cap4Ai2025      from '../data/2025-26/cap4/ai_cutoff.json'
-
-// ── 2024-25 ──────────────────────────────────────────────────────────────────
-import seatMatrix2024  from '../data/2024-25/seat_matrix.json'
-import cap1Mh2024      from '../data/2024-25/cap1/mh_cutoff.json'
-import cap1Ai2024      from '../data/2024-25/cap1/ai_cutoff.json'
-import cap2Mh2024      from '../data/2024-25/cap2/mh_cutoff.json'
-import cap2Ai2024      from '../data/2024-25/cap2/ai_cutoff.json'
-import cap3Mh2024      from '../data/2024-25/cap3/mh_cutoff.json'
-import cap3Ai2024      from '../data/2024-25/cap3/ai_cutoff.json'
-import cap3Diploma2024 from '../data/2024-25/cap3/diploma_cutoff.json'
-
-// ── 2023-24 ──────────────────────────────────────────────────────────────────
-import seatMatrix2023  from '../data/2023-24/seat_matrix.json'
-import cap1Mh2023      from '../data/2023-24/cap1/mh_cutoff.json'
-import cap1Ai2023      from '../data/2023-24/cap1/ai_cutoff.json'
-import cap2Mh2023      from '../data/2023-24/cap2/mh_cutoff.json'
-import cap2Ai2023      from '../data/2023-24/cap2/ai_cutoff.json'
-import cap3Mh2023      from '../data/2023-24/cap3/mh_cutoff.json'
-import cap3Ai2023      from '../data/2023-24/cap3/ai_cutoff.json'
-
-// ── 2022-23 ──────────────────────────────────────────────────────────────────
-import seatMatrix2022  from '../data/2022-23/seat_matrix.json'
-import cap1Mh2022      from '../data/2022-23/cap1/mh_cutoff.json'
-import cap1Ai2022      from '../data/2022-23/cap1/ai_cutoff.json'
-import cap2Mh2022      from '../data/2022-23/cap2/mh_cutoff.json'
-import cap2Ai2022      from '../data/2022-23/cap2/ai_cutoff.json'
-import cap3Mh2022      from '../data/2022-23/cap3/mh_cutoff.json'
-import cap3Ai2022      from '../data/2022-23/cap3/ai_cutoff.json'
-
 // ── Code migration map ──────────────────────────────────────────────────────
 // When DTE changes a college's code across years, map old → new so data merges
 // into a single entry instead of creating duplicates.
@@ -183,7 +144,12 @@ function emptyYearCutoffs() {
   }
 }
 
-function buildDataIndex() {
+function buildDataIndex(
+  seatMatrix2025, cap1Mh2025, cap1Ai2025, cap2Mh2025, cap2Ai2025, cap3Mh2025, cap3Ai2025, cap4Mh2025, cap4Ai2025,
+  seatMatrix2024, cap1Mh2024, cap1Ai2024, cap2Mh2024, cap2Ai2024, cap3Mh2024, cap3Ai2024, cap3Diploma2024,
+  seatMatrix2023, cap1Mh2023, cap1Ai2023, cap2Mh2023, cap2Ai2023, cap3Mh2023, cap3Ai2023,
+  seatMatrix2022, cap1Mh2022, cap1Ai2022, cap2Mh2022, cap2Ai2022, cap3Mh2022, cap3Ai2022
+) {
   const index = {}
 
   // Seed from 2025-26 seat matrix (newest & most complete)
@@ -382,8 +348,67 @@ function buildDataIndex() {
 }
 
 let _idx = null
+
+export async function ensureDataLoaded() {
+  if (_idx) return _idx
+
+  const [
+    sm25, cap1_25, cap1Ai_25, cap2_25, cap2Ai_25, cap3_25, cap3Ai_25, cap4_25, cap4Ai_25,
+    sm24, cap1_24, cap1Ai_24, cap2_24, cap2Ai_24, cap3_24, cap3Ai_24, cap3Dip_24,
+    sm23, cap1_23, cap1Ai_23, cap2_23, cap2Ai_23, cap3_23, cap3Ai_23,
+    sm22, cap1_22, cap1Ai_22, cap2_22, cap2Ai_22, cap3_22, cap3Ai_22
+  ] = await Promise.all([
+    import('../data/2025-26/seat_matrix.json'),
+    import('../data/2025-26/cap1/mh_cutoff.json'),
+    import('../data/2025-26/cap1/ai_cutoff.json'),
+    import('../data/2025-26/cap2/mh_cutoff.json'),
+    import('../data/2025-26/cap2/ai_cutoff.json'),
+    import('../data/2025-26/cap3/mh_cutoff.json'),
+    import('../data/2025-26/cap3/ai_cutoff.json'),
+    import('../data/2025-26/cap4/mh_cutoff.json'),
+    import('../data/2025-26/cap4/ai_cutoff.json'),
+    
+    import('../data/2024-25/seat_matrix.json'),
+    import('../data/2024-25/cap1/mh_cutoff.json'),
+    import('../data/2024-25/cap1/ai_cutoff.json'),
+    import('../data/2024-25/cap2/mh_cutoff.json'),
+    import('../data/2024-25/cap2/ai_cutoff.json'),
+    import('../data/2024-25/cap3/mh_cutoff.json'),
+    import('../data/2024-25/cap3/ai_cutoff.json'),
+    import('../data/2024-25/cap3/diploma_cutoff.json'),
+    
+    import('../data/2023-24/seat_matrix.json'),
+    import('../data/2023-24/cap1/mh_cutoff.json'),
+    import('../data/2023-24/cap1/ai_cutoff.json'),
+    import('../data/2023-24/cap2/mh_cutoff.json'),
+    import('../data/2023-24/cap2/ai_cutoff.json'),
+    import('../data/2023-24/cap3/mh_cutoff.json'),
+    import('../data/2023-24/cap3/ai_cutoff.json'),
+    
+    import('../data/2022-23/seat_matrix.json'),
+    import('../data/2022-23/cap1/mh_cutoff.json'),
+    import('../data/2022-23/cap1/ai_cutoff.json'),
+    import('../data/2022-23/cap2/mh_cutoff.json'),
+    import('../data/2022-23/cap2/ai_cutoff.json'),
+    import('../data/2022-23/cap3/mh_cutoff.json'),
+    import('../data/2022-23/cap3/ai_cutoff.json')
+  ])
+
+  _idx = buildDataIndex(
+    sm25.default, cap1_25.default, cap1Ai_25.default, cap2_25.default, cap2Ai_25.default, cap3_25.default, cap3Ai_25.default, cap4_25.default, cap4Ai_25.default,
+    sm24.default, cap1_24.default, cap1Ai_24.default, cap2_24.default, cap2Ai_24.default, cap3_24.default, cap3Ai_24.default, cap3Dip_24.default,
+    sm23.default, cap1_23.default, cap1Ai_23.default, cap2_23.default, cap2Ai_23.default, cap3_23.default, cap3Ai_23.default,
+    sm22.default, cap1_22.default, cap1Ai_22.default, cap2_22.default, cap2Ai_22.default, cap3_22.default, cap3Ai_22.default
+  )
+
+  return _idx
+}
+
 export function getDataIndex() {
-  if (!_idx) _idx = buildDataIndex()
+  if (!_idx) {
+    console.warn('getDataIndex was called before ensureDataLoaded resolved. Returning empty index.')
+    return {}
+  }
   return _idx
 }
 
