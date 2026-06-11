@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "node --max-old-space-size=8192 node_modules/vite/bin/vite.js build",
-    "postbuild": "node scripts/generate-sitemap.cjs",
+    "postbuild": "node scripts/generate-sitemap.cjs && node scripts/prerender.cjs",
     "preview": "vite preview"
   },
   "dependencies": {

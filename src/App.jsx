@@ -12,6 +12,7 @@ import CollegesPage from './pages/CollegesPage'
 import FAQPage from './pages/FAQPage'
 import CollegeDetailPage from './pages/CollegeDetailPage'
 import ChangeLogPage from './pages/ChangeLogPage'
+import HelpPage from './pages/HelpPage'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 
@@ -60,6 +61,7 @@ function AppRoutes() {
         <Route path="/colleges" element={<Layout><CollegesPage /></Layout>} />
         <Route path="/faq" element={<Layout><FAQPage /></Layout>} />
         <Route path="/changelog" element={<Layout><ChangeLogPage /></Layout>} />
+        <Route path="/help" element={<Layout><HelpPage /></Layout>} />
         <Route path="/college/:collegeCode" element={<Layout><CollegeDetailPage /></Layout>} />
       </Routes>
     </>

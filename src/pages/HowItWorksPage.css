@@ -256,3 +256,139 @@
 @media (max-width: 768px) {
   .smr-grid { grid-template-columns: 1fr; }
 }
+
+/* Math modeling styles */
+.math-formula-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .math-formula-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.math-card {
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-divider);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+[data-theme="dark"] .math-card {
+  background: var(--color-surface);
+}
+
+.math-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 0, 0, 0.1);
+}
+
+.math-card h4 {
+  font-size: 15px;
+  font-weight: 750;
+  color: var(--color-primary);
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.math-card-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.math-equation {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--color-text);
+  background: var(--color-surface-offset);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  border: 1px solid var(--color-divider);
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .math-equation {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.math-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  border-top: 1px dashed var(--color-divider);
+  padding-top: 14px;
+}
+
+.math-legend strong {
+  color: var(--color-text);
+}
+
+/* Verification cards */
+.verification-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+@media (max-width: 640px) {
+  .verification-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.verification-card {
+  display: block;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--color-divider);
+  border-radius: 20px;
+  padding: 28px;
+  text-decoration: none;
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+[data-theme="dark"] .verification-card {
+  background: rgba(30, 30, 30, 0.7);
+}
+
+.verification-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.verification-card h4 {
+  font-size: 15px;
+  font-weight: 750;
+  color: var(--color-primary);
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.verification-card p {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react'
-import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
+import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles, Lock } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
 import { eligibilityLabel, eligibilityColor, eligibilityBg, convertPercentileToRank, convertRankToPercentile, getCandidateCountForYear } from '../utils/eligibility'
@@ -317,6 +317,72 @@ export default function HomePage() {
         <div className="container">
           <h2 className="inputs-title">Enter Your Details</h2>
           <div className="inputs-grid">
+            {/* Merit List Autoload Panel (Locked Mock) */}
+            <div className="input-panel autoload-panel" style={{ gridColumn: '1 / -1' }}>
+              <div className="panel-title" style={{ color: 'var(--color-primary)', borderBottomColor: 'var(--color-primary)' }}>Merit List Autoload</div>
+              <p className="panel-desc" style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>
+                Retrieve your official State CET Cell merit details automatically.
+              </p>
+              
+              <div className="autoload-content-layout">
+                {/* Active input for Examination ID */}
+                <div className="form-group autoload-id-group">
+                  <label className="form-label">Examination Roll Number / Application ID</label>
+                  <div style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      placeholder="e.g. EN26102948" 
+                      defaultValue=""
+                    />
+                    <button className="btn btn-primary" onClick={(e) => e.preventDefault()} style={{ whiteSpace: 'nowrap' }}>
+                      Fetch Merit
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mock Output Fields with Lock Overlay */}
+                <div className="autoload-mock-fields-container">
+                  <div className="autoload-fields-grid">
+                    <div className="form-group">
+                      <label className="form-label">Full Name</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">MHT-CET Percentile</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">State Merit Rank</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Category Rank</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Domicile / Gender</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Seat Type Category</label>
+                      <input className="form-input" type="text" disabled placeholder="Pending Merit List..." />
+                    </div>
+                  </div>
+
+                  {/* Lock Overlay */}
+                  <div className="autoload-overlay">
+                    <div className="autoload-overlay-card">
+                      <Lock className="lock-icon" size={24} />
+                      <p className="lock-text">
+                        <strong>Merit Autoload Feature</strong> — Will be enabled once the State CET Cell releases the official 2026 Merit List. You can manually enter your scores below in the meantime.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Left: Scores */}
             <div className="input-panel">
               <div className="panel-title">Exam Scores</div>

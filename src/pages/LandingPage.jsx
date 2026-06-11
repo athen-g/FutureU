@@ -137,6 +137,13 @@ export default function LandingPage() {
               <h3>Probability Calculator</h3>
               <p>Uses a mathematical sigmoid-curve regression model to predict your percentage chance of securing admission.</p>
             </div>
+            <div className="feature-card">
+              <div className="feature-icon-wrap" style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', color: '#22c55e' }}>
+                <ShieldCheck size={24} />
+              </div>
+              <h3>Guaranteed Privacy</h3>
+              <p>100% Student-Made, No Spam calls, and No Sign-up required. Your score data never leaves your browser.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -216,6 +223,15 @@ export default function LandingPage() {
               Get Started Now <ArrowRight size={18} />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Institutional Outreach Section */}
+      <section className="institutional-outreach" style={{ textAlign: 'center', padding: '40px 0 10px' }}>
+        <div className="container">
+          <p style={{ fontSize: '14.5px', color: 'var(--color-text-muted)', margin: 0 }}>
+            <strong>For Institutions:</strong> Are you a college or institution wanting to integrate FutureU? Reach out directly at <a href="mailto:atharvanitinghule@gmail.com" style={{ color: 'var(--color-primary)', fontWeight: 650, textDecoration: 'none' }}>atharvanitinghule@gmail.com</a>
+          </p>
         </div>
       </section>
     </div>

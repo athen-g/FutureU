@@ -853,3 +853,94 @@
 .result-row:nth-child(5) { animation-delay: 0.25s; }
 .result-row:nth-child(6) { animation-delay: 0.30s; }
 .result-row:nth-child(n+7) { animation-delay: 0.35s; }
+
+/* Merit Autoload Panel & Overlay Styles */
+.autoload-panel {
+  position: relative;
+}
+
+.autoload-content-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.autoload-id-group {
+  margin-bottom: 20px;
+}
+
+.autoload-mock-fields-container {
+  position: relative;
+  border-top: 1px solid var(--color-divider);
+  padding-top: 24px;
+}
+
+.autoload-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  filter: blur(1px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .autoload-fields-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .autoload-fields-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.autoload-overlay {
+  position: absolute;
+  top: 16px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 5;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed rgba(220, 38, 38, 0.2);
+}
+
+[data-theme="dark"] .autoload-overlay {
+  background: rgba(24, 24, 27, 0.65);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.autoload-overlay-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-divider);
+  border-left: 4px solid var(--color-primary);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 620px;
+  box-shadow: var(--shadow-md);
+}
+
+.autoload-overlay-card .lock-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.autoload-overlay-card .lock-text {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--color-text);
+  font-family: 'Poppins', sans-serif;
+}
+

@@ -81,6 +81,27 @@ export default function AboutPage() {
 
         <hr className="about-divider" />
 
+        {/* Section: Privacy Guarantee */}
+        <section className="about-section grid-2">
+          <div className="section-label">Privacy Guarantee</div>
+          <div className="section-content">
+            <h2 className="content-heading">Your data is yours alone. No tracking. No spam.</h2>
+            <p>
+              Unlike standard commercial consulting portals, FutureU guarantees complete candidate privacy:
+            </p>
+            <ul style={{ paddingLeft: '20px', lineHeight: '1.8', marginBottom: '20px', color: 'var(--color-text-muted)', fontSize: '14px' }}>
+              <li><strong>Zero Databases:</strong> We do not run any backend servers or database stores. All your percentiles, ranks, and shortlists are saved locally inside your browser's session storage.</li>
+              <li><strong>No Sign-up / Login:</strong> You do not need to register, enter your phone number, or create an account to use any of our features.</li>
+              <li><strong>No Spam Calls:</strong> Because we never collect your contact details, you will never receive aggressive marketing, sales, or spam calls from third-party coaching classes or private colleges.</li>
+            </ul>
+            <p>
+              Every tool and calculator is built by a student, for students, to provide clean, uncompromised support.
+            </p>
+          </div>
+        </section>
+
+        <hr className="about-divider" />
+
         {/* Section: Developer Profile */}
         <section className="about-section grid-2">
           <div className="section-label">The Developer</div>
@@ -156,18 +177,18 @@ export default function AboutPage() {
 
         <hr className="about-divider" />
 
-        {/* Section: Contact & Disclaimer */}
+        {/* Section: Contact & Support */}
         <section className="about-section grid-2">
           <div className="section-label">Contact & Support</div>
           <div className="section-content">
-            <h2 className="content-heading">Direct Contact</h2>
+            <h2 className="content-heading">Get in Touch</h2>
             <p>
-              FutureU is built to be helpful. If you identify any discrepancy in cutoffs, face a bug in predictions, or want to contribute to the project, feel free to reach out directly.
+              FutureU is designed to be a transparent and helpful resource. If you represent an institution wanting to discuss integration opportunities, want to report cutoff issues/bugs, or need personal support, reach out directly.
             </p>
             <div className="contact-box-minimal">
               <Mail size={18} className="contact-icon-red" />
               <div className="contact-details">
-                <span className="contact-lbl">Email Address</span>
+                <span className="contact-lbl">Email Address for Support & Partnerships</span>
                 <a href="mailto:atharvanitinghule@gmail.com" className="contact-link-red">atharvanitinghule@gmail.com</a>
               </div>
             </div>

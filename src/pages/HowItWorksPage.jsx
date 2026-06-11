@@ -88,6 +88,39 @@ export default function HowItWorksPage() {
               <p>Very low probability of admission. Do not rely heavily on these choices.</p>
             </div>
           </div>
+
+          {/* Math Modeling Section */}
+          <div className="math-modeling-section" style={{ marginTop: '56px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '20px', letterSpacing: '-0.01em' }}>Prediction Model Mathematics</h3>
+            
+            <div className="math-formula-grid">
+              <div className="math-card">
+                <h4>1. Weighted Historical Trend Prediction</h4>
+                <p className="math-card-desc">Calculates the predicted 2026 cutoff rank by applying recency weighting factors across preceding admission years:</p>
+                <div className="math-equation">
+                  R<sub>pred</sub> = &Sigma; (w<sub>t</sub> &middot; R<sub>t</sub>) / &Sigma; w<sub>t</sub>
+                </div>
+                <div className="math-legend">
+                  <span><strong>R<sub>pred</sub></strong>: Predicted 2026 Cutoff Rank</span>
+                  <span><strong>R<sub>t</sub></strong>: Historical Cutoff Rank in year <em>t</em></span>
+                  <span><strong>w<sub>t</sub></strong>: Exponential weight &lambda;<sup>(t - base_year)</sup></span>
+                </div>
+              </div>
+
+              <div className="math-card">
+                <h4>2. Sigmoid Power Curve Admission Chance</h4>
+                <p className="math-card-desc">Computes the admission allocation probability using a dynamic logistics sigmoid regression curve:</p>
+                <div className="math-equation">
+                  P(&Delta;) = 100 / (1 + e<sup>-k &middot; &Delta;</sup>)
+                </div>
+                <div className="math-legend">
+                  <span><strong>P(&Delta;)</strong>: Admission Probability Percentage</span>
+                  <span><strong>&Delta;</strong>: Clearance margin (Candidate %ile - predicted cutoff %ile)</span>
+                  <span><strong>k</strong>: Steepness parameter representing cutoff boundary density</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -112,6 +145,26 @@ export default function HowItWorksPage() {
                 <div className="cat-desc">{c.desc}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Official Sourcing and Verification */}
+      <section className="section">
+        <div className="container">
+          <h2 className="section-title" style={{ marginBottom: 12 }}>Official Verification & Sourcing</h2>
+          <p className="section-subtitle" style={{ marginBottom: 32 }}>All database cutoffs and parameters are fully audit-compliant and cross-referenced with official archives.</p>
+          
+          <div className="verification-grid">
+            <a href="https://cetcell.mahacet.org/" target="_blank" rel="noopener noreferrer" className="verification-card">
+              <h4>Official CET Cell Portal</h4>
+              <p>Register, upload documents, check allocations, and submit preference lists on the government admission system.</p>
+            </a>
+            
+            <a href="https://cetcell.mahacet.org/" target="_blank" rel="noopener noreferrer" className="verification-card">
+              <h4>Historical Cutoffs Archives</h4>
+              <p>Download official CAP Round 1, Round 2, and Round 3 cutoff lists published directly by the State CET Cell.</p>
+            </a>
           </div>
         </div>
       </section>

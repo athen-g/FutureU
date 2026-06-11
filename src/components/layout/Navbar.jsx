@@ -20,6 +20,7 @@ export default function Navbar() {
     { to: '/home', label: 'Home' },
     { to: '/colleges', label: 'Colleges' },
     { to: '/how-it-works', label: 'How It Works' },
+    { to: '/help', label: 'Student Help' },
     { to: '/about', label: 'About' },
     { to: '/changelog', label: 'Changelog' },
   ]
