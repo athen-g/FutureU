@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react'
+import { ensureDataLoaded } from '../utils/dataLoader'
 
 const AppContext = createContext(null)
 
@@ -6,6 +7,21 @@ export function AppProvider({ children }) {
   const [theme, setTheme] = useState('light')
   const [shortlist, setShortlist] = useState([]) // [{collegeCode, branchCode, collegeName, branchName}]
   const [showSupportModal, setShowSupportModal] = useState(false)
+  const [isDataReady, setIsDataReady] = useState(false)
+  const [isDataLoading, setIsDataLoading] = useState(false)
+
+  const loadAppData = useCallback(async () => {
+    if (isDataReady || isDataLoading) return
+    setIsDataLoading(true)
+    try {
+      await ensureDataLoaded()
+      setIsDataReady(true)
+    } catch (err) {
+      console.error('Failed to load application data:', err)
+    } finally {
+      setIsDataLoading(false)
+    }
+  }, [isDataReady, isDataLoading])
 
   const openSupportModal = useCallback(() => setShowSupportModal(true), [])
   const closeSupportModal = useCallback(() => setShowSupportModal(false), [])
@@ -40,7 +56,8 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       theme, toggleTheme,
       shortlist, addToShortlist, removeFromShortlist, isShortlisted, clearShortlist,
-      showSupportModal, openSupportModal, closeSupportModal
+      showSupportModal, openSupportModal, closeSupportModal,
+      isDataReady, isDataLoading, loadAppData
     }}>
       {children}
     </AppContext.Provider>

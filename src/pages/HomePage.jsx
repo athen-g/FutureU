@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, memo } from 'react'
+import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react'
 import { Search, RotateCcw, Download, Heart, MapPin, Info, ChevronDown, ChevronUp, ExternalLink, Sparkles } from 'lucide-react'
 import { buildRankedList } from '../utils/filterLogic'
 import { getAllBranches, getAllCities } from '../utils/dataLoader'
@@ -103,8 +103,12 @@ export default function HomePage() {
   const [calcPct, setCalcPct] = useState('')
   const [calcRank, setCalcRank] = useState('')
   const resultsRef = useRef(null)
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal, isDataReady, loadAppData } = useApp()
   
+  useEffect(() => {
+    loadAppData()
+  }, [loadAppData])
+
   useMeta(
     'College Recommendations',
     'Find your perfect engineering college in Maharashtra with FutureU. Get customized MHT-CET & JEE cutoff predictions, seat matrix data, and automated preference list generation.'
@@ -115,8 +119,8 @@ export default function HomePage() {
     ...f, [k]: f[k].includes(v) ? f[k].filter(x => x !== v) : [...f[k], v]
   })), [])
 
-  const allBranches = useMemo(() => getAllBranches(), [])
-  const allCities = useMemo(() => getAllCities(), [])
+  const allBranches = useMemo(() => isDataReady ? getAllBranches() : [], [isDataReady])
+  const allCities = useMemo(() => isDataReady ? getAllCities() : [], [isDataReady])
 
   const estimatedRank = useMemo(() => {
     if (filters.percentile && !filters.rank) {
@@ -185,6 +189,22 @@ export default function HomePage() {
       date: new Date().toLocaleDateString('en-IN'),
     })
     openSupportModal()
+  }
+
+  if (!isDataReady) {
+    return (
+      <div className="home-page-loading" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
+        <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255, 0, 0, 0.1)', borderTop: '3px solid #FF0000', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
+        <h3 style={{ fontWeight: 500, color: 'var(--color-text)' }}>Loading college datasets...</h3>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginTop: '8px' }}>Fetching and preparing admission matrices</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
   }
 
   const hasJEE = filters.jeePercentile || filters.jeeRank

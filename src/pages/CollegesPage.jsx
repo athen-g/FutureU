@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Search, MapPin, Heart, ExternalLink, ArrowUpDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getAllColleges, getCityFromCollegeName, normalizeStatus } from '../utils/dataLoader'
@@ -39,10 +39,15 @@ export default function CollegesPage() {
   const [autonomyFilter, setAutonomyFilter] = useState('all')
   const [sortBy, setSortBy] = useState('dte_asc')
   const [page, setPage] = useState(1)
-  const { addToShortlist, removeFromShortlist, isShortlisted } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, isDataReady, loadAppData } = useApp()
+
+  useEffect(() => {
+    loadAppData()
+  }, [loadAppData])
+
   usePageTitle('College Directory — 350+ Engineering Colleges in Maharashtra')
 
-  const allColleges = useMemo(() => getAllColleges(), [])
+  const allColleges = useMemo(() => isDataReady ? getAllColleges() : [], [isDataReady])
 
   const types = useMemo(() => {
     const s = new Set(allColleges.map(c => normalizeStatus(c.status)).filter(Boolean))
@@ -89,6 +94,22 @@ export default function CollegesPage() {
   }, [allColleges, search, typeFilter, autonomyFilter, sortBy])
 
   const paginated = filtered.slice(0, page * PAGE_SIZE)
+
+  if (!isDataReady) {
+    return (
+      <div className="colleges-page-loading" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
+        <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255, 0, 0, 0.1)', borderTop: '3px solid #FF0000', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
+        <h3 style={{ fontWeight: 500, color: 'var(--color-text)' }}>Loading college directory...</h3>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginTop: '8px' }}>Fetching and preparing admission matrices</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
+  }
 
   return (
     <div className="colleges-page">

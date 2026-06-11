@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo, Fragment, useEffect } from 'react'
 import { MapPin, Heart, Share2, ExternalLink, Info, ChevronRight } from 'lucide-react'
 import { getCollege, getAllColleges, getCityFromCollegeName, normalizeStatus } from '../utils/dataLoader'
 import { predictCutoff, getHistoricalCutoffs, classifyEligibility, eligibilityColor, eligibilityBg, eligibilityLabel, calculateChance, getChanceStatus, getDefaultCutoffs, convertRankToPercentile, convertPercentileToRank } from '../utils/eligibility'
@@ -76,19 +76,24 @@ function SeatCell({ value, className }) {
 
 export default function CollegeDetailPage() {
   const { collegeCode } = useParams()
-  const college = useMemo(() => getCollege(collegeCode), [collegeCode])
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, isDataReady, loadAppData } = useApp()
+
+  useEffect(() => {
+    loadAppData()
+  }, [loadAppData])
+
+  const college = useMemo(() => isDataReady ? getCollege(collegeCode) : null, [collegeCode, isDataReady])
   const [activeTab, setActiveTab] = useState(0)
   const [expandedBranch, setExpandedBranch] = useState(null)
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist } = useApp()
 
   const city = useMemo(() => college ? getCityFromCollegeName(college.college_name, college.college_code) : '', [college])
 
-  const pageTitle = college
-    ? `${college.college_name}, ${city} — Cutoffs, Seats & Admissions`
-    : 'College Not Found'
-  const pageDescription = college
-    ? `Get 2025-26 admission cutoffs, seat matrix, branch-wise probability, and trends for ${college.college_name} in ${city}, Maharashtra on FutureU.`
-    : 'The requested college details could not be found on FutureU.'
+  const pageTitle = isDataReady
+    ? (college ? `${college.college_name}, ${city} — Cutoffs, Seats & Admissions` : 'College Not Found')
+    : 'Loading College Details — FutureU'
+  const pageDescription = isDataReady
+    ? (college ? `Get 2025-26 admission cutoffs, seat matrix, branch-wise probability, and trends for ${college.college_name} in ${city}, Maharashtra on FutureU.` : 'The requested college details could not be found on FutureU.')
+    : 'Loading college datasets on FutureU...'
 
   useMeta(pageTitle, pageDescription)
 
@@ -110,6 +115,22 @@ export default function CollegeDetailPage() {
       return null
     } catch { return null }
   })
+
+  if (!isDataReady) {
+    return (
+      <div className="loading-state-container" style={{padding:'120px 24px', textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60vh'}}>
+        <div className="loading-spinner" style={{width:'40px', height:'40px', border:'3px solid rgba(255, 0, 0, 0.1)', borderTop:'3px solid #FF0000', borderRadius:'50%', animation:'spin 1s linear infinite', marginBottom:'20px'}}></div>
+        <h3 style={{fontWeight:500, color:'var(--color-text)'}}>Loading college dataset...</h3>
+        <p style={{color:'var(--color-text-muted)', fontSize:'14px', marginTop:'8px'}}>Fetching and compiling cutoffs & seat matrices</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
+  }
 
   if (!college) {
     return (
