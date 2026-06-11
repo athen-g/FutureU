@@ -21,6 +21,7 @@ export default function Navbar() {
     { to: '/colleges', label: 'Colleges' },
     { to: '/how-it-works', label: 'How It Works' },
     { to: '/about', label: 'About' },
+    { to: '/changelog', label: 'Changelog' },
   ]
 
   return (

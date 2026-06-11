@@ -1,0 +1,302 @@
+.changelog-page {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  min-height: 100vh;
+  position: relative;
+  z-index: 5;
+  padding: 80px 0 120px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hide global background orbs when Changelog page is active */
+body:has(.changelog-page) .orb {
+  display: none !important;
+}
+
+/* Enforce flat minimalist styling on navbar and footer when rendering Changelog page */
+body:has(.changelog-page) .navbar {
+  background-color: var(--color-bg) !important;
+  border-bottom: 1px solid var(--color-divider) !important;
+  box-shadow: none !important;
+}
+body:has(.changelog-page) .footer {
+  background-color: var(--color-bg) !important;
+  border-top: 1px solid var(--color-divider) !important;
+  box-shadow: none !important;
+}
+
+/* Navbar active state styling matching about page */
+body:has(.changelog-page) .navbar .nav-link {
+  color: var(--color-text-muted) !important;
+}
+body:has(.changelog-page) .navbar .nav-link.active {
+  color: #FF0000 !important;
+  font-weight: 600;
+}
+body:has(.changelog-page) .navbar .nav-link:hover {
+  color: var(--color-text) !important;
+}
+
+.changelog-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* Header Section */
+.changelog-header {
+  margin-bottom: 50px;
+  text-align: left;
+}
+.changelog-title {
+  font-size: clamp(2.5rem, 6vw, 3.8rem);
+  font-weight: 900;
+  color: var(--color-text) !important;
+  margin-bottom: 24px;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.changelog-title span {
+  color: #FF0000 !important;
+}
+.changelog-lead {
+  font-size: clamp(1.15rem, 2.5vw, 1.4rem);
+  color: var(--color-text-muted) !important;
+  line-height: 1.5;
+  max-width: 720px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Divider styling */
+.changelog-divider {
+  border: none;
+  border-top: 1px solid var(--color-divider) !important;
+  margin: 40px 0 60px 0;
+}
+
+/* Timeline Layout */
+.changelog-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  text-align: left;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 24px;
+  position: relative;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.marker-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #FF0000;
+  border: 3px solid var(--color-bg);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.2);
+  z-index: 2;
+  margin-top: 8px;
+}
+
+.marker-line {
+  width: 2px;
+  flex: 1;
+  background-color: var(--color-divider);
+  z-index: 1;
+  position: absolute;
+  top: 22px;
+  bottom: -16px;
+}
+
+.timeline-content {
+  padding-bottom: 56px;
+}
+
+/* Version Header */
+.version-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.version-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.version-badge {
+  background-color: var(--color-primary-highlight);
+  color: #FF0000;
+  border: 1px solid #fca5a5;
+  font-size: 13px;
+  font-weight: 750;
+  padding: 4px 12px;
+  border-radius: 30px;
+  letter-spacing: 0.02em;
+}
+
+.version-description {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 850;
+  color: var(--color-text) !important;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.release-date {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  background-color: var(--color-surface-offset);
+  border: 1px solid var(--color-divider);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 2px;
+}
+
+/* Changes Box */
+.version-changes-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+[data-theme="dark"] .version-changes-box {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.change-category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.cat-icon {
+  flex-shrink: 0;
+}
+
+.text-added {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+[data-theme="dark"] .text-added {
+  background-color: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+}
+
+.text-changed {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+[data-theme="dark"] .text-changed {
+  background-color: rgba(217, 119, 6, 0.15);
+  color: #fbbf24;
+}
+
+.text-fixed {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+[data-theme="dark"] .text-fixed {
+  background-color: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+}
+
+.change-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.change-item {
+  font-size: 14.5px;
+  color: var(--color-text-muted) !important;
+  line-height: 1.6;
+  position: relative;
+  padding-left: 16px;
+}
+
+.change-item::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--color-text-faint);
+  font-weight: bold;
+}
+
+/* Responsive updates */
+@media (max-width: 768px) {
+  .changelog-page {
+    padding: 60px 0 80px;
+  }
+  .changelog-container {
+    padding: 0 24px;
+  }
+  .timeline-content {
+    padding-bottom: 40px;
+  }
+  .version-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .version-badge-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .version-badge {
+    padding: 3px 10px;
+    font-size: 12px;
+  }
+  .release-date {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+  .version-changes-box {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .change-item {
+    font-size: 13.5px;
+  }
+}
