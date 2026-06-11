@@ -33,6 +33,49 @@ function getCollegeTotalSeats(college) {
   return Object.values(college.branches || {}).reduce((s, b) => s + (b.total_seats || 0), 0)
 }
 
+function CollegesPageSkeleton() {
+  return Array.from({ length: 6 }).map((_, i) => (
+    <div key={i} className="college-dir-card-skeleton">
+      <div className="college-dir-header" style={{ marginBottom: '16px' }}>
+        <div className="dir-logo skeleton-shimmer" style={{ background: 'transparent' }}></div>
+        <div style={{ flex: 1 }}>
+          <div className="skeleton-line skeleton-line--long skeleton-shimmer" style={{ height: '14px', marginBottom: '8px' }}></div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <div className="skeleton-badge skeleton-shimmer" style={{ width: '60px', height: '18px' }}></div>
+            <div className="skeleton-badge skeleton-shimmer" style={{ width: '40px', height: '18px' }}></div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="college-dir-stats" style={{ marginBottom: '16px' }}>
+        <div className="dir-stat">
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '24px', height: '12px', margin: '0 auto 6px auto' }}></div>
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '40px', height: '10px', margin: '0 auto' }}></div>
+        </div>
+        <div className="dir-stat">
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '28px', height: '12px', margin: '0 auto 6px auto' }}></div>
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '40px', height: '10px', margin: '0 auto' }}></div>
+        </div>
+        <div className="dir-stat">
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '32px', height: '12px', margin: '0 auto 6px auto' }}></div>
+          <div className="skeleton-line skeleton-shimmer" style={{ width: '40px', height: '10px', margin: '0 auto' }}></div>
+        </div>
+      </div>
+
+      <div className="college-dir-branches" style={{ borderTop: '1px solid var(--color-divider)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {[1, 2, 3].map(j => (
+          <div key={j} className="dir-branch-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="skeleton-line skeleton-shimmer" style={{ width: '65%', height: '10px' }}></div>
+            <div className="skeleton-line skeleton-shimmer" style={{ width: '15%', height: '10px' }}></div>
+          </div>
+        ))}
+      </div>
+
+      <div className="skeleton-button-block skeleton-shimmer" style={{ marginTop: '16px' }}></div>
+    </div>
+  ))
+}
+
 export default function CollegesPage() {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('All')
@@ -95,21 +138,7 @@ export default function CollegesPage() {
 
   const paginated = filtered.slice(0, page * PAGE_SIZE)
 
-  if (!isDataReady) {
-    return (
-      <div className="colleges-page-loading" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
-        <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255, 0, 0, 0.1)', borderTop: '3px solid #FF0000', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
-        <h3 style={{ fontWeight: 500, color: 'var(--color-text)' }}>Loading college directory...</h3>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginTop: '8px' }}>Fetching and preparing admission matrices</p>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    )
-  }
+  // Skeletons are rendered during dataset loading, ensuring immediate frame paint.
 
   return (
     <div className="colleges-page">
@@ -160,62 +189,72 @@ export default function CollegesPage() {
           </div>
         </div>
 
-        <div className="colleges-count">{filtered.length} colleges found</div>
-
-        <div className="colleges-grid">
-          {paginated.map(college => {
-            const city = getCityFromCollegeName(college.college_name, college.college_code)
-            const status = normalizeStatus(college.status)
-            const branchCount = Object.keys(college.branches || {}).length
-            const totalSeats = Object.values(college.branches || {}).reduce((s, b) => s + (b.total_seats || 0), 0)
-
-            return (
-              <div key={college.college_code} className="college-dir-card">
-                <div className="college-dir-header">
-                  <div className="dir-logo">
-                    {college.college_name.split(' ').filter(w => /^[A-Z]/.test(w)).slice(0,3).map(w => w[0]).join('')}
-                  </div>
-                  <div>
-                    <h3>{college.college_name}</h3>
-                    <div className="college-dir-meta">
-                      {city && <span><MapPin size={11}/> {city}</span>}
-                      <span className="status-chip">{status}</span>
-                      {college.is_autonomous && <span className="auto-chip">Auto</span>}
-                    </div>
-                  </div>
-                </div>
-                <div className="college-dir-stats">
-                  <div className="dir-stat"><strong>{branchCount}</strong><span>Branches</span></div>
-                  <div className="dir-stat"><strong>{totalSeats || '—'}</strong><span>Total Seats</span></div>
-                  <div className="dir-stat"><strong>{college.college_code}</strong><span>DTE Code</span></div>
-                </div>
-                <div className="college-dir-branches">
-                  {Object.values(college.branches || {}).slice(0, 3).map(b => (
-                    <div key={b.branch_code} className="dir-branch-row">
-                      <span className="dir-branch-name">{b.branch_name}</span>
-                      <span className="dir-branch-seats">{b.total_seats || '—'} seats</span>
-                      <button
-                        className={`shortlist-btn ${isShortlisted(college.college_code, b.branch_code) ? 'active' : ''}`}
-                        onClick={() => isShortlisted(college.college_code, b.branch_code)
-                          ? removeFromShortlist(college.college_code, b.branch_code)
-                          : addToShortlist({ collegeCode: college.college_code, branchCode: b.branch_code, collegeName: college.college_name, branchName: b.branch_name })
-                        }
-                      >
-                        <Heart size={13} fill={isShortlisted(college.college_code, b.branch_code) ? 'currentColor' : 'none'}/>
-                      </button>
-                    </div>
-                  ))}
-                  {branchCount > 3 && <div className="dir-more">+{branchCount - 3} more branches</div>}
-                </div>
-                <Link to={`/college/${college.college_code}`} className="btn btn-outline-red btn-sm" style={{marginTop:14, width:'100%', justifyContent:'center', display:'flex'}}>
-                  <ExternalLink size={13}/> View Details
-                </Link>
-              </div>
-            )
-          })}
+        <div className="colleges-count">
+          {isDataReady ? (
+            `${filtered.length} colleges found`
+          ) : (
+            <span className="skeleton-shimmer" style={{ display: 'inline-block', width: '120px', height: '16px', borderRadius: '4px' }}></span>
+          )}
         </div>
 
-        {paginated.length < filtered.length && (
+        <div className="colleges-grid">
+          {isDataReady ? (
+            paginated.map(college => {
+              const city = getCityFromCollegeName(college.college_name, college.college_code)
+              const status = normalizeStatus(college.status)
+              const branchCount = Object.keys(college.branches || {}).length
+              const totalSeats = Object.values(college.branches || {}).reduce((s, b) => s + (b.total_seats || 0), 0)
+
+              return (
+                <div key={college.college_code} className="college-dir-card">
+                  <div className="college-dir-header">
+                    <div className="dir-logo">
+                      {college.college_name.split(' ').filter(w => /^[A-Z]/.test(w)).slice(0,3).map(w => w[0]).join('')}
+                    </div>
+                    <div>
+                      <h3>{college.college_name}</h3>
+                      <div className="college-dir-meta">
+                        {city && <span><MapPin size={11}/> {city}</span>}
+                        <span className="status-chip">{status}</span>
+                        {college.is_autonomous && <span className="auto-chip">Auto</span>}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="college-dir-stats">
+                    <div className="dir-stat"><strong>{branchCount}</strong><span>Branches</span></div>
+                    <div className="dir-stat"><strong>{totalSeats || '—'}</strong><span>Total Seats</span></div>
+                    <div className="dir-stat"><strong>{college.college_code}</strong><span>DTE Code</span></div>
+                  </div>
+                  <div className="college-dir-branches">
+                    {Object.values(college.branches || {}).slice(0, 3).map(b => (
+                      <div key={b.branch_code} className="dir-branch-row">
+                        <span className="dir-branch-name">{b.branch_name}</span>
+                        <span className="dir-branch-seats">{b.total_seats || '—'} seats</span>
+                        <button
+                          className={`shortlist-btn ${isShortlisted(college.college_code, b.branch_code) ? 'active' : ''}`}
+                          onClick={() => isShortlisted(college.college_code, b.branch_code)
+                            ? removeFromShortlist(college.college_code, b.branch_code)
+                            : addToShortlist({ collegeCode: college.college_code, branchCode: b.branch_code, collegeName: college.college_name, branchName: b.branch_name })
+                          }
+                        >
+                          <Heart size={13} fill={isShortlisted(college.college_code, b.branch_code) ? 'currentColor' : 'none'}/>
+                        </button>
+                      </div>
+                    ))}
+                    {branchCount > 3 && <div className="dir-more">+{branchCount - 3} more branches</div>}
+                  </div>
+                  <Link to={`/college/${college.college_code}`} className="btn btn-outline-red btn-sm" style={{marginTop:14, width:'100%', justifyContent:'center', display:'flex'}}>
+                    <ExternalLink size={13}/> View Details
+                  </Link>
+                </div>
+              )
+            })
+          ) : (
+            <CollegesPageSkeleton />
+          )}
+        </div>
+
+        {isDataReady && paginated.length < filtered.length && (
           <div className="load-more-wrap">
             <button className="btn btn-secondary" onClick={() => setPage(p => p + 1)}>
               Load More ({filtered.length - paginated.length} remaining)

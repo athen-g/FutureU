@@ -76,6 +76,31 @@ const INIT = {
   customInflationRate: 22.38,
 }
 
+function SearchTableSkeleton() {
+  return Array.from({ length: 5 }).map((_, i) => (
+    <tr key={i} className="result-row-skeleton">
+      <td className="col-sr"><div className="skeleton-circle skeleton-shimmer"></div></td>
+      <td className="col-college">
+        <div className="skeleton-line skeleton-line--long skeleton-shimmer" style={{ height: '14px', marginBottom: '8px' }}></div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '80px', height: '10px' }}></div>
+          <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '60px', height: '10px' }}></div>
+        </div>
+      </td>
+      <td className="col-branch">
+        <div className="skeleton-line skeleton-line--medium skeleton-shimmer" style={{ height: '12px', marginBottom: '6px' }}></div>
+        <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '70px', height: '9px' }}></div>
+      </td>
+      <td className="col-cutoff">
+        <div className="skeleton-line skeleton-line--medium skeleton-shimmer" style={{ height: '12px', marginBottom: '4px' }}></div>
+        <div className="skeleton-line skeleton-line--short skeleton-shimmer" style={{ width: '80px', height: '10px' }}></div>
+      </td>
+      <td className="col-chance"><div className="skeleton-badge skeleton-shimmer"></div></td>
+      <td className="col-action"><div className="skeleton-button skeleton-shimmer"></div></td>
+    </tr>
+  ))
+}
+
 export default function HomePage() {
   const [filters, setFilters] = useState(() => {
     try {
@@ -97,6 +122,7 @@ export default function HomePage() {
   })
   const [results, setResults] = useState([])
   const [hasSearched, setHasSearched] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
   const [activeTab, setActiveTab] = useState('mh')
   const [visibleCount, setVisibleCount] = useState(100)
   const [showCalc, setShowCalc] = useState(false)
@@ -129,7 +155,7 @@ export default function HomePage() {
     return null
   }, [filters.percentile, filters.rank, filters.customInflationRate])
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     try {
       sessionStorage.setItem('futureu_percentile', filters.percentile)
       sessionStorage.setItem('futureu_rank', filters.rank)
@@ -144,14 +170,30 @@ export default function HomePage() {
       console.warn('Failed to save filters to sessionStorage', e)
     }
 
-    const mhRows = buildRankedList({ ...filters, type: 'mh' })
-    const jeeRows = (filters.jeePercentile || filters.jeeRank)
-      ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
-      : []
-    setResults({ mh: mhRows, ai: jeeRows })
     setHasSearched(true)
-    setVisibleCount(100)
+    setIsSearching(true)
+    
+    // Scroll to results section immediately to let user see the shimmering table skeleton
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+
+    const startTime = Date.now()
+
+    if (!isDataReady) {
+      await loadAppData()
+    }
+
+    const elapsed = Date.now() - startTime
+    const remainingTime = Math.max(0, 1200 - elapsed)
+
+    setTimeout(() => {
+      const mhRows = buildRankedList({ ...filters, type: 'mh' })
+      const jeeRows = (filters.jeePercentile || filters.jeeRank)
+        ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
+        : []
+      setResults({ mh: mhRows, ai: jeeRows })
+      setIsSearching(false)
+      setVisibleCount(100)
+    }, remainingTime)
   }
 
   const handleReset = () => {
@@ -191,21 +233,7 @@ export default function HomePage() {
     openSupportModal()
   }
 
-  if (!isDataReady) {
-    return (
-      <div className="home-page-loading" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
-        <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255, 0, 0, 0.1)', borderTop: '3px solid #FF0000', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
-        <h3 style={{ fontWeight: 500, color: 'var(--color-text)' }}>Loading college datasets...</h3>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginTop: '8px' }}>Fetching and preparing admission matrices</p>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    )
-  }
+  // Data loader triggers silently in the background via useEffect, so the UI is ready immediately.
 
   const hasJEE = filters.jeePercentile || filters.jeeRank
 
@@ -538,7 +566,32 @@ export default function HomePage() {
               </div>
             </div>
 
-            {currentRows.length === 0 ? (
+            {isSearching ? (
+              <>
+                <div className="results-info">
+                  <Info size={14}/>
+                  <span>Admissions probability analyzer is preparing customized recommendations...</span>
+                </div>
+
+                <div className="results-table-wrap">
+                  <table className="results-table">
+                    <thead>
+                      <tr>
+                        <th className="col-sr">#</th>
+                        <th className="col-college">College</th>
+                        <th className="col-branch">Branch</th>
+                        <th className="col-cutoff">Predicted / Prev Cutoff</th>
+                        <th className="col-chance">Chance</th>
+                        <th className="col-action"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <SearchTableSkeleton />
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : currentRows.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">🔍</div>
                 <h3>No results found</h3>
