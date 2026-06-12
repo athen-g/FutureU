@@ -206,6 +206,14 @@ body:has(.about-page-new) .navbar .nav-link:hover {
   background: #FF0000 !important;
   color: #ffffff !important;
 }
+.btn-instagram {
+  border-color: #e1306c !important;
+  color: #e1306c !important;
+}
+.btn-instagram:hover {
+  background: #e1306c !important;
+  color: #ffffff !important;
+}
 
 /* Contact Box Minimalist */
 .contact-box-minimal {
