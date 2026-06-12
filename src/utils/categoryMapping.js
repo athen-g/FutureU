@@ -6,9 +6,16 @@ export function getRelevantCategoryCodes({ category, gender, domicile, tfws, ews
     domicile === 'Other University' ? 'O' :
     'S'
 
-  codes.push(`${gPrefix}OPEN${suffix}`)
-  if (gender === 'Female') codes.push(`GOPEN${suffix}`)
+  // 1. TFWS (highest priority specific category)
+  if (tfws) codes.push('TFWS')
 
+  // 2. EWS
+  if (ews) codes.push('EWS')
+
+  // 3. PWD specific OPEN
+  if (pwd) codes.push(`PWDOPEN${suffix}`)
+
+  // 4. Selected reservation category (OBC, SC, ST, etc.)
   const catCodeMap = {
     OBC: 'OBC',
     SC: 'SC',
@@ -25,9 +32,9 @@ export function getRelevantCategoryCodes({ category, gender, domicile, tfws, ews
     if (gender === 'Female') codes.push(`G${catCodeMap[category]}${suffix}`)
   }
 
-  if (tfws) codes.push('TFWS')
-  if (ews) codes.push('EWS')
-  if (pwd) codes.push(`PWDOPEN${suffix}`)
+  // 5. General OPEN (lowest priority fallback)
+  codes.push(`${gPrefix}OPEN${suffix}`)
+  if (gender === 'Female') codes.push(`GOPEN${suffix}`)
 
   return [...new Set(codes)]
 }

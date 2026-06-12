@@ -43,7 +43,7 @@ try {
     const collegeUrl = `https://www.futureu.dev/college/${collegeCode}`;
     const pageTitle = `${collegeName} — Cutoffs, Seats & Predictions | FutureU`;
     const pageDescription = `Check 2025-26 cutoff ranks, seat matrix, and admission probability for ${collegeName} on FutureU. 100% free and privacy-focused.`;
-    const ogImage = `https://www.futureu.dev/og-logo.png`; // structured preview image or logo
+    const ogImage = `https://www.futureu.dev/og-image.png`; // structured preview image or logo
 
     // Generate pre-rendered html content
     let prHtml = indexHtml;
