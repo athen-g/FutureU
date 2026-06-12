@@ -214,6 +214,14 @@ body:has(.about-page-new) .navbar .nav-link:hover {
   background: #e1306c !important;
   color: #ffffff !important;
 }
+.btn-feedback {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+.btn-feedback:hover {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+}
 
 /* Contact Box Minimalist */
 .contact-box-minimal {

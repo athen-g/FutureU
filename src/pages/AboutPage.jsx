@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Github, Mail, ExternalLink, Gift, Heart, Linkedin, Globe, Instagram } from 'lucide-react'
+import { Github, Mail, ExternalLink, Gift, Heart, Linkedin, Globe, Instagram, FileText } from 'lucide-react'
 import gpayQr from '../assets/gpay-qr.jpeg'
 import './AboutPage.css'
 
@@ -51,9 +51,9 @@ export default function AboutPage() {
             <p style={{ marginTop: '10px', fontSize: '14px', borderTop: '1px solid var(--color-divider)', paddingTop: '16px' }}>
               📣 <strong>Help Us Improve!</strong> Your feedback is incredibly valuable. Please take 1 minute to fill out our quick feedback form to help us build a better FutureU.
             </p>
-            <div>
-              <a href="https://forms.gle/3ZEtaRGaurri54Sr6" target="_blank" rel="noopener noreferrer" className="btn-kofi-style" style={{ textTransform: 'uppercase', textDecoration: 'none' }}>
-                Fill Feedback Form
+            <div style={{ marginTop: '12px' }}>
+              <a href="https://forms.gle/3ZEtaRGaurri54Sr6" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-feedback">
+                <FileText size={16} /> Fill Feedback Form
               </a>
             </div>
           </div>
@@ -121,10 +121,10 @@ export default function AboutPage() {
             </p>
             <div className="dev-actions">
               <a href="https://github.com/athen-g" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-github">
-                <Github size={16} /> GitHub Profile
+                <Github size={16} /> GitHub
               </a>
               <a href="https://www.linkedin.com/in/atharva-g45/" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-linkedin">
-                <Linkedin size={16} /> LinkedIn Profile
+                <Linkedin size={16} /> linkedin
               </a>
               <a href="https://atharvanitinghule.tech" target="_blank" rel="noopener noreferrer" className="btn-minimalist btn-portfolio">
                 <Globe size={16} /> My Portfolio
