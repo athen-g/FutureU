@@ -1,62 +1,68 @@
 # FutureU — MHT-CET CAP College Preference List Builder
 
-FutureU is a modern, data-driven web application designed to help engineering aspirants in Maharashtra navigate the Centralized Admission Process (CAP) conducted by the CET Cell / DTE Maharashtra. By parsing and analyzing official cutoff data, FutureU empowers students to make intelligent, informed decisions when submitting their option forms.
+FutureU is a modern, privacy-first, data-driven web application designed to help engineering aspirants in Maharashtra navigate the Centralized Admission Process (CAP) conducted by the State CET Cell / DTE Maharashtra.
+
+By compiling years of official cutoff database tables into an intelligent, on-device prediction model, FutureU empowers students to draft their option forms with complete confidence.
 
 ---
 
-## 🌟 How FutureU Helps Students
+## 💎 Unique Selling Propositions (USPs) & Core Pillars
 
-Selecting the right engineering colleges and branches can be overwhelming. FutureU simplifies this process by providing:
+Unlike standard commercial consulting portals or simple static PDF guides, FutureU stands out through three core pillars:
 
-1. **Smart Cutoff Predictions**
-   - We utilize a weighted average of historical CAP cutoffs across multiple years (2022-23 to 2024-25) combined with trend projection. More recent years are weighted higher to give a realistic cutoff prediction.
+### 1. 🛡️ 100% Privacy Guarantee (Zero Tracking)
+*   **No Databases or Servers**: We do not store or collect student ranks, scores, or names. Everything is processed and cached strictly inside your browser's session storage.
+*   **No Registration or Spam Calls**: You do not need to sign up, enter a phone number, or log in. You will **never** receive telemarketing, consulting pitches, or spam calls from private colleges or coaching institutes.
 
-2. **Eligibility and Admission Probability**
-   - Students enter their MHT-CET or JEE percentile and receive instant color-coded classifications:
-     - 🟢 **Safe (>= 75% chance)**: High likelihood of admission.
-     - 🟡 **Moderate (>= 50% chance)**: Good chance, strong option.
-     - 🟠 **Reach (>= 15% chance)**: Competitive, but worth keeping in the preference list.
-     - 🔴 **Unlikely (< 15% chance)**: Highly competitive, lower probability of admission.
+### 2. 📊 Dynamic Rank-Based Prediction Engine
+*   **merit Rank Projection**: Cutoff percentiles fluctuate year-to-year based on candidate counts. FutureU automatically projects your 2026 State Merit Rank using candidate inflation rates (from 10% to 40% growth parameters).
+*   **Lenient Top Percentile Matching**: Sigmoid power curves scale matching exponents dynamically ($k = 7$ for cutoffs $< 1,000$) to keep highly volatile top percentiles realistic and slightly lenient.
+*   **Prioritized Category Cutoffs**: Automatically detects and matches specific reservation codes (OBC, EWS, TFWS, PWD, SC, ST) over general OPEN parameters to show your actual admission odds.
 
-3. **Interactive Trend Analysis**
-   - Aspirants can click on any branch to view a detailed trend chart (using Chart.js) showing cutoff percentiles for the last three years, helping them spot rising or falling demand.
+### 3. ⚡ Ultra-Fast Performance (PageSpeed Optimized)
+*   **Route-Level Code Splitting**: Lazy loads all routes via `React.lazy()` + `<Suspense>`, lowering initial entrypoint bundle weight by **76.5%** (~204KB).
+*   **Progressive Data Loading**: Fetches the active year (`2025-26`) data instantly for initial search operations, while streaming in historical cutoff years (`2024`, `2023`, `2022`) silently in background idle frames.
+*   **SSG Pre-rendering**: Over 368 college directory nodes are statically pre-rendered to display rich Open Graph link previews and titles on WhatsApp, Telegram, and Google Search.
 
-4. **Multi-Round and Category Filters**
-   - Aspirants can view cutoff details for specific **CAP Rounds (1, 2, or 3)** and **Reservation Categories** (e.g., OPEN, OBC, SC, ST, EWS, TFWS, etc.). This helps identify how cutoffs fluctuate across rounds.
+---
 
-5. **Seat Matrix Breakdown**
-   - Provides a comprehensive, color-coded grid mapping out seat types (General, Ladies, PWD, Defense, etc.) per branch, helping students locate colleges with available seats for their specific categories.
+## 🌟 Core Features
 
-6. **Custom Preference List Builder & PDF Export**
-   - Students can shortlist college-branch combinations to create a structured preference list.
-   - The list can be sorted, reordered, and exported to a clean, print-friendly PDF, ready to refer to when filling the official CET Option Form.
+*   **Eligibility Classifications**: Color-coded probability ratings:
+    *   🟢 **Safe (75% – 99% chance)**: Percentile is 1.3+ above the predicted cutoff.
+    *   🟡 **Moderate (50% – 74% chance)**: Percentile is 0 to 1.3 above the predicted cutoff.
+    *   🟠 **Reach (15% – 49% chance)**: Percentile is 0 to 2.0 below the predicted cutoff.
+    *   🔴 **Unlikely (1% – 14% chance)**: Percentile is more than 2.0 below the predicted cutoff.
+*   **Seat Matrix Breakdown**: Visual mapping of seat types (General, Ladies, PWD, Defense, etc.) per branch.
+*   **Preference Builder & PDF Exporter**: Shortlist college-branch combinations to print a clean preference list for the official CET portal.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend Core**: React 18 + Vite (for high-speed development and bundling) + React Router DOM v6
-- **Charts**: Chart.js & React-Chartjs-2
-- **PDF Generation**: jsPDF
-- **Icons**: Lucide React
-- **Design System**: Vanilla CSS with customized variable-driven dark/light mode support, Outfit & Poppins modern typographies, and a responsive mobile-first grid.
+*   **Frontend Core**: React 18 + Vite + React Router DOM v6
+*   **Charts**: Chart.js & React-Chartjs-2
+*   **PDF Generation**: jsPDF
+*   **Icons**: Lucide React
+*   **Design System**: Variable-driven Vanilla CSS with fully responsive dark/light modes.
 
 ---
 
 ## 📊 Data Coverage & Verification
 
 Our database contains parsed data directly from official Maharashtra CET Cell publications:
-- **2022-23**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
-- **2023-24**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
-- **2024-25**: CAP Round 1, 2, and 3 MH & AI cutoffs + Seat Matrix data
+*   **2022-23**: CAP Round 1, 2, 3 MH & AI cutoffs + Seat Matrix data
+*   **2023-24**: CAP Round 1, 2, 3 MH & AI cutoffs + Seat Matrix data
+*   **2024-25**: CAP Round 1, 2, 3 MH & AI cutoffs + Seat Matrix data
+*   **2025-26**: CAP Round 1, 2, 3, 4 MH & AI cutoffs + Seat Matrix data
 
-*Disclaimer: FutureU is an advisory tool. Always cross-verify details with the official [MHT-CET Admission Portal](https://cetcell.mahacet.org) before locking options in the CAP portal.*
+*Disclaimer: FutureU is an advisory tool. Always cross-verify details with the official [MHT-CET Admission Portal](https://cetcell.mahacet.org) before locking options.*
 
 ---
 
 ## 🚀 Getting Started
 
-To run the project locally on your machine, follow these steps:
+To run the project locally:
 
 1. **Install Dependencies**
    ```bash
@@ -68,7 +74,7 @@ To run the project locally on your machine, follow these steps:
    ```
    Open `http://localhost:5173` in your browser.
 
-3. **Build for Production**
+3. **Build & Pre-render for Production**
    ```bash
    npm run build
    ```
