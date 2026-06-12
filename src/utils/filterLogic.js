@@ -112,10 +112,10 @@ export function buildRankedList(filters) {
     }
   }
 
-  // Sort hardest first (lowest predicted rank first)
+  // Sort hardest first (lowest previous rank first)
   rows.sort((a, b) => {
-    const ra = a.predictedRank ?? Infinity
-    const rb = b.predictedRank ?? Infinity
+    const ra = a.previousRank ?? Infinity
+    const rb = b.previousRank ?? Infinity
     if (ra !== rb) return ra - rb
     return a.collegeName.localeCompare(b.collegeName)
   })
