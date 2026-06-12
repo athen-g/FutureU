@@ -81,6 +81,47 @@ function AppRoutes() {
 }
 
 export default function App() {
+  useEffect(() => {
+    let timer
+    const loadKofi = () => {
+      timer = setTimeout(() => {
+        const scriptId = 'kofi-overlay-script'
+        if (!document.getElementById(scriptId)) {
+          const script = document.createElement('script')
+          script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'
+          script.id = scriptId
+          script.async = true
+          script.onload = () => {
+            if (window.kofiWidgetOverlay) {
+              try {
+                window.kofiWidgetOverlay.draw('athen_g', {
+                  'type': 'floating-chat',
+                  'floating-chat.donateButton.text': 'Support Me',
+                  'floating-chat.donateButton.background-color': '#d90000',
+                  'floating-chat.donateButton.text-color': '#fff'
+                })
+              } catch (err) {
+                console.warn('Ko-fi overlay widget draw error', err)
+              }
+            }
+          }
+          document.body.appendChild(script)
+        }
+      }, 5000)
+    }
+
+    if (document.readyState === 'complete') {
+      loadKofi()
+    } else {
+      window.addEventListener('load', loadKofi)
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer)
+      window.removeEventListener('load', loadKofi)
+    }
+  }, [])
+
   return (
     <BrowserRouter>
       <AppProvider>
