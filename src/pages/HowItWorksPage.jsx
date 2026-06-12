@@ -41,14 +41,13 @@ export default function HowItWorksPage() {
 
       <section className="section">
         <div className="container">
-          <h2 className="section-title" style={{marginBottom:32}}>The CAP Process</h2>
+          <h2 className="section-title" style={{marginBottom:32}}>How to Use FutureU</h2>
           <div className="cap-steps">
             {[
-              { step: '1', title: 'MHT-CET / JEE Exam', desc: 'Students appear for MHT-CET (Maharashtra state exam) or JEE Main (for AI seats). Scores are converted to percentiles.' },
-              { step: '2', title: 'Registration & Document Verification', desc: 'Students register on the CET Cell portal and submit documents for category, domicile, and income verification.' },
-              { step: '3', title: 'Option Form Submission', desc: 'Students fill their preferred colleges and branches in priority order. This is the most critical step — choose wisely.' },
-              { step: '4', title: 'CAP Round 1', desc: 'First allotment based on merit and preferences. Students can accept, freeze, or upgrade in subsequent rounds.' },
-              { step: '5', title: 'CAP Round 2 & 3', desc: 'Further allotment rounds to fill remaining seats. Cutoffs may rise or fall depending on remaining seat availability.' },
+              { step: '1', title: 'Enter Your Scores', desc: 'Input your MHT-CET or JEE percentile/rank. If you enter a percentile, our candidate model automatically projects your state merit rank for the 2026-27 cycle.' },
+              { step: '2', title: 'Apply Preferences & Filters', desc: 'Filter recommendations by selecting target branch preferences (e.g. CS, IT, E&TC), specific cities (e.g. Pune, Mumbai), and college type/autonomy.' },
+              { step: '3', title: 'Analyze Recommendations', desc: 'Review lists categorized by Safe, Moderate, Reach, or Unlikely, dynamically sorted by previous cutoff ranks. Specific reservation cutoffs (OBC, EWS, TFWS) are automatically prioritized if selected.' },
+              { step: '4', title: 'Download & Submit Preference List', desc: 'Shortlist target choices, verify seat matrices, and download a finalized custom preference list PDF to refer to during official State CET portal submissions.' },
             ].map((s, i) => (
               <div key={i} className="cap-step">
                 <div className="cap-step-num">{s.step}</div>
@@ -105,18 +104,40 @@ export default function HowItWorksPage() {
                   <span><strong>R<sub>t</sub></strong>: Historical Cutoff Rank in year <em>t</em></span>
                   <span><strong>w<sub>t</sub></strong>: Exponential weight &lambda;<sup>(t - base_year)</sup></span>
                 </div>
+                <div className="math-example-box" style={{ marginTop: '16px', padding: '12px', background: 'var(--color-surface-offset)', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid var(--color-primary)', fontSize: '12.5px', lineHeight: '1.5' }}>
+                  <strong style={{ color: 'var(--color-text)', display: 'block', marginBottom: '4px' }}>Example Calculation:</strong>
+                  If cutoff ranks were 5,400 (2023), 5,200 (2024), and 4,900 (2025):
+                  <div style={{ margin: '6px 0', fontFamily: 'monospace' }}>
+                    Weighted Avg = (5400*1 + 5200*2 + 4900*3)/6 = 5,083
+                  </div>
+                  <div style={{ fontFamily: 'monospace' }}>
+                    Trend Delta = (4900 - 5400)/2 = -250 (rising demand)
+                  </div>
+                  <div style={{ marginTop: '4px' }}>
+                    <strong>R<sub>pred</sub></strong> = 5,083 + (-250 * 0.4) &approx; <strong>4,983</strong>
+                  </div>
+                </div>
               </div>
 
               <div className="math-card">
                 <h4>2. Sigmoid Power Curve Admission Chance</h4>
-                <p className="math-card-desc">Computes the admission allocation probability using a dynamic logistics sigmoid regression curve:</p>
+                <p className="math-card-desc">Computes the admission allocation probability based on the ratio of candidate rank vs predicted cutoff rank:</p>
                 <div className="math-equation">
-                  P(&Delta;) = 100 / (1 + e<sup>-k &middot; &Delta;</sup>)
+                  P(r, c) = 100 / (1 + (r / c)<sup>10</sup>)
                 </div>
                 <div className="math-legend">
-                  <span><strong>P(&Delta;)</strong>: Admission Probability Percentage</span>
-                  <span><strong>&Delta;</strong>: Clearance margin (Candidate %ile - predicted cutoff %ile)</span>
-                  <span><strong>k</strong>: Steepness parameter representing cutoff boundary density</span>
+                  <span><strong>P(r, c)</strong>: Admission Probability Percentage</span>
+                  <span><strong>r</strong>: Student state merit rank</span>
+                  <span><strong>c</strong>: Predicted cutoff rank (R<sub>pred</sub>)</span>
+                </div>
+                <div className="math-example-box" style={{ marginTop: '16px', padding: '12px', background: 'var(--color-surface-offset)', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid var(--color-primary)', fontSize: '12.5px', lineHeight: '1.5' }}>
+                  <strong style={{ color: 'var(--color-text)', display: 'block', marginBottom: '4px' }}>Example Allocation Chances:</strong>
+                  For a predicted cutoff rank of <strong>5,000</strong>:
+                  <ul style={{ paddingLeft: '16px', margin: '4px 0 0', lineHeight: '1.4' }}>
+                    <li><strong>Rank 5,000</strong> (100% match): 100 / (1 + 1<sup>10</sup>) = <strong>50% (Moderate)</strong></li>
+                    <li><strong>Rank 4,000</strong> (20% better): 100 / (1 + 0.8<sup>10</sup>) &approx; <strong>90% (Safe)</strong></li>
+                    <li><strong>Rank 6,000</strong> (20% worse): 100 / (1 + 1.2<sup>10</sup>) &approx; <strong>14% (Unlikely)</strong></li>
+                  </ul>
                 </div>
               </div>
             </div>
