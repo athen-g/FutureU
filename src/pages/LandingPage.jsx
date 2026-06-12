@@ -61,7 +61,7 @@ export default function LandingPage() {
                     <div className="card-top">
                       <div className="card-meta">
                         <span className="coll-code">DTE: 03012</span>
-                        <h4>VJTI, Mumbai</h4>
+                        <h3>VJTI, Mumbai</h3>
                         <p>Information Technology</p>
                       </div>
                       <div className="prob-badge prob-safe">92% Chance</div>
@@ -76,7 +76,7 @@ export default function LandingPage() {
                     <div className="card-top">
                       <div className="card-meta">
                         <span className="coll-code">DTE: 16006</span>
-                        <h4>COEP Technological University, Pune</h4>
+                        <h3>COEP Technological University, Pune</h3>
                         <p>Computer Engineering</p>
                       </div>
                       <div className="prob-badge prob-reach">46% Chance</div>
@@ -91,7 +91,7 @@ export default function LandingPage() {
                     <div className="card-top">
                       <div className="card-meta">
                         <span className="coll-code">DTE: 06271</span>
-                        <h4>PICT, Pune</h4>
+                        <h3>PICT, Pune</h3>
                         <p>Information Technology</p>
                       </div>
                       <div className="prob-badge prob-safe">96% Chance</div>

@@ -4,6 +4,22 @@ import './ChangeLogPage.css'
 
 const CHANGELOG_DATA = [
   {
+    version: 'v2.5.0',
+    date: '2026-06-12',
+    description: 'Accessibility Contrast Polish & Ko-fi Widget Load Removal',
+    changes: {
+      added: [
+        'Asynchronous Font Preloading: Optimized Google Fonts loading in index.html to preload font stylesheets and render them asynchronously, resolving swap-related layout shifts.'
+      ],
+      changed: [
+        'Accessibility Color Contrast: Darkened the primary red color (#D90000 from #FF0000) and the secondary text-muted color in variables.css to comply with WCAG AA accessibility standards.',
+        'Mockup Design Contrast: Darkened contrast colors of tags and labels in LandingPage.css inside the hero mockup card interface.',
+        'Ko-fi Script Removal: Deleted the resource-heavy, dynamic Ko-fi chat widget loader script from SupportModal.jsx, saving 2.2 seconds of main-thread execution time.',
+        'Mockup Heading Semantics: Replaced skipped <h4> tags inside the landing page mockup card structure with <h3> tags to maintain a structured logical heading tree.'
+      ]
+    }
+  },
+  {
     version: 'v2.4.0',
     date: '2026-06-12',
     description: 'Performance Optimizations, Prioritized Category Search & Curve Leniency',

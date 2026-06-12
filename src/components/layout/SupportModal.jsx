@@ -6,40 +6,6 @@ import './SupportModal.css'
 export default function SupportModal({ onClose }) {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const scriptId = 'kofi-overlay-script'
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script')
-      script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'
-      script.id = scriptId
-      script.async = true
-      script.onload = () => {
-        if (window.kofiWidgetOverlay) {
-          try {
-            window.kofiWidgetOverlay.draw('athen_g', {
-              'type': 'floating-chat',
-              'floating-chat.donateButton.text': 'Support Me',
-              'floating-chat.donateButton.background-color': '#e91e63',
-              'floating-chat.donateButton.text-color': '#fff'
-            })
-          } catch (err) {
-            console.warn('Ko-fi overlay widget draw error', err)
-          }
-        }
-      }
-      document.body.appendChild(script)
-    } else if (window.kofiWidgetOverlay) {
-      try {
-        window.kofiWidgetOverlay.draw('athen_g', {
-          'type': 'floating-chat',
-          'floating-chat.donateButton.text': 'Support Me',
-          'floating-chat.donateButton.background-color': '#e91e63',
-          'floating-chat.donateButton.text-color': '#fff'
-        })
-      } catch (err) {}
-    }
-  }, [])
-
   const handleKofiClick = () => {
     window.open('https://ko-fi.com/athen_g', '_blank', 'noopener,noreferrer')
   }
