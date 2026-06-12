@@ -19,14 +19,22 @@ const SORT_OPTIONS = [
   { value: 'seats_asc', label: 'Seats: Low → High' },
 ]
 
-function getCollegeBestCutoff(college) {
-  let best = null
+function getCollegeBestPrevYearCutoffPercentile(college) {
+  let maxPercentile = null
   for (const b of Object.values(college.branches || {})) {
-    const { history } = getDefaultCutoffs(b)
-    const pred = predictCutoff(history)
-    if (pred != null && (best === null || pred > best)) best = pred
+    let history = getHistoricalCutoffs(b, 'GOPENS')
+    let prevNode = history.find(h => h.year === '2025-26')
+    if (!prevNode || prevNode.percentile == null) {
+      const { history: fallbackHist } = getDefaultCutoffs(b)
+      prevNode = fallbackHist.find(h => h.year === '2025-26')
+    }
+    if (prevNode && prevNode.percentile != null) {
+      if (maxPercentile === null || prevNode.percentile > maxPercentile) {
+        maxPercentile = prevNode.percentile
+      }
+    }
   }
-  return best
+  return maxPercentile
 }
 
 function getCollegeTotalSeats(college) {
@@ -115,13 +123,19 @@ export default function CollegesPage() {
         case 'name_desc':
           return b.college_name.localeCompare(a.college_name)
         case 'cutoff_desc': {
-          const ca = getCollegeBestCutoff(a) ?? -1
-          const cb = getCollegeBestCutoff(b) ?? -1
+          const ca = getCollegeBestPrevYearCutoffPercentile(a)
+          const cb = getCollegeBestPrevYearCutoffPercentile(b)
+          if (ca === null && cb === null) return 0
+          if (ca === null) return 1
+          if (cb === null) return -1
           return cb - ca
         }
         case 'cutoff_asc': {
-          const ca = getCollegeBestCutoff(a) ?? 999
-          const cb = getCollegeBestCutoff(b) ?? 999
+          const ca = getCollegeBestPrevYearCutoffPercentile(a)
+          const cb = getCollegeBestPrevYearCutoffPercentile(b)
+          if (ca === null && cb === null) return 0
+          if (ca === null) return 1
+          if (cb === null) return -1
           return ca - cb
         }
         case 'seats_desc':

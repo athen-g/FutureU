@@ -225,6 +225,20 @@ export default function CollegeDetailPage() {
     ? `${Math.min(...allCutoffs).toFixed(2)} – ${Math.max(...allCutoffs).toFixed(2)}`
     : '—'
 
+  const allRanks = branches.flatMap(b => {
+    const history = getHistoricalCutoffs(b, selectedCategory, selectedCapRound)
+    return history.map(h => h.rank)
+  }).filter(v => v != null)
+  const rankRange = allRanks.length > 0
+    ? `${Math.min(...allRanks).toLocaleString()} – ${Math.max(...allRanks).toLocaleString()}`
+    : '—'
+
+  const activeCatObj = availableCategories.find(c => c.code === selectedCategory)
+  let displayLabel = activeCatObj ? activeCatObj.label : selectedCategory
+  displayLabel = displayLabel.replace(/\s*>\s*/g, ' ')
+  const cutoffSub = `${displayLabel} %ile`
+  const rankSub = `${displayLabel} Rank`
+
   const similarColleges = getAllColleges()
     .filter(c => c.college_code !== college.college_code && getCityFromCollegeName(c.college_name, c.college_code) === city)
     .slice(0, 3)
@@ -288,7 +302,8 @@ export default function CollegeDetailPage() {
             <StatCard label="Admission Probability" value={`${studentPercentile}%ile entered`} sub="See table below"/>
           )}
           <StatCard label="Total Seats" value={totalSeats || '—'} sub="All branches"/>
-          <StatCard label="MHT-CET Cutoff Range" value={cutoffRange} sub="OPEN State Level %ile"/>
+          <StatCard label="MHT-CET Cutoff Range" value={cutoffRange} sub={cutoffSub}/>
+          <StatCard label="MHT-CET Rank Range" value={rankRange} sub={rankSub}/>
           <StatCard label="College Code" value={college.college_code} sub="DTE Code"/>
           <StatCard label="Branches" value={branches.length} sub="Available"/>
         </div>
