@@ -10,29 +10,38 @@ By compiling years of official cutoff database tables into an intelligent, on-de
 
 Unlike standard commercial consulting portals or simple static PDF guides, FutureU stands out through three core pillars:
 
-### 1. 🛡️ 100% Privacy Guarantee (Zero Tracking)
-*   **No Databases or Servers**: We do not store or collect student ranks, scores, or names. Everything is processed and cached strictly inside your browser's session storage.
-*   **No Registration or Spam Calls**: You do not need to sign up, enter a phone number, or log in. You will **never** receive telemarketing, consulting pitches, or spam calls from private colleges or coaching institutes.
+### 1. 🛡️ 100% Privacy Guarantee (Zero Tracking & No Spam)
+*   **Completely Client-Side**: All prediction calculations, preference list operations, and historical analysis are performed strictly inside your browser. We have no backend databases or telemetry tracking.
+*   **No Registration Required**: You don't need to sign up, input an email address, or enter a phone number.
+*   **Zero Spam Calls**: Commercial consulting agencies often sell student data to private colleges, leading to non-stop telemarketing and admission spam. On FutureU, your data is 100% yours and never leaves your machine.
 
-### 2. 📊 Dynamic Rank-Based Prediction Engine
-*   **merit Rank Projection**: Cutoff percentiles fluctuate year-to-year based on candidate counts. FutureU automatically projects your 2026 State Merit Rank using candidate inflation rates (from 10% to 40% growth parameters).
-*   **Lenient Top Percentile Matching**: Sigmoid power curves scale matching exponents dynamically ($k = 7$ for cutoffs $< 1,000$) to keep highly volatile top percentiles realistic and slightly lenient.
-*   **Prioritized Category Cutoffs**: Automatically detects and matches specific reservation codes (OBC, EWS, TFWS, PWD, SC, ST) over general OPEN parameters to show your actual admission odds.
+### 2. 📊 Intelligent Rank-Based Prediction Engine
+*   **State Merit Rank Projection**: MHT-CET cutoff percentiles shift dramatically depending on yearly candidate volumes. FutureU projects your 2026 State Merit Rank using candidate inflation rates (customizable parameters, with a 22.38% default projection based on the 422,863 candidate pool from 2025-26).
+*   **Sigmoid Power Curve Probability**: Admission odds are computed using a mathematical sigmoid curve:
+    $$P(r, c) = \frac{100}{1 + \left(\frac{r}{c}\right)^k}$$
+    Where $r$ is the student's rank, $c$ is the predicted cutoff, and $k$ is the dynamic scale exponent.
+*   **Lenient Top Percentile Sensitivity**: Admission chances are highly non-linear at the top. To remain realistic, the prediction curve scales the exponent $k$ based on competitive density:
+    *   $k = 7$ for cutoffs $< 1,000$ (lower exponent = gentler, more lenient cutoff sensitivity at top-tier schools)
+    *   $k = 8.5$ for cutoffs $< 5,000$
+    *   $k = 10$ otherwise
+*   **Prioritized Reservation Cutoffs**: FutureU automatically maps, detects, and prioritizes specific reservation codes (OBC, EWS, TFWS, SC, ST, PWD) over general Open category parameters to give you the most accurate real-world probabilities.
+*   **Exponential Recency Weighting**: Predicted cutoffs are calculated by weighting recent years higher ($w_t = \lambda^{(t - \text{base})}$) combined with a 40% trend projection factor to match rising or falling branch demand.
 
-### 3. ⚡ Ultra-Fast Performance (PageSpeed Optimized)
-*   **Route-Level Code Splitting**: Lazy loads all routes via `React.lazy()` + `<Suspense>`, lowering initial entrypoint bundle weight by **76.5%** (~204KB).
-*   **Progressive Data Loading**: Fetches the active year (`2025-26`) data instantly for initial search operations, while streaming in historical cutoff years (`2024`, `2023`, `2022`) silently in background idle frames.
-*   **SSG Pre-rendering**: Over 368 college directory nodes are statically pre-rendered to display rich Open Graph link previews and titles on WhatsApp, Telegram, and Google Search.
+### 3. ⚡ High-Speed Performance & Accessibility
+*   **Route-Level Code Splitting**: Employs React lazy loading (`React.lazy` + `<Suspense>`) to slash the initial entrypoint JS bundle payload by **76.5%** (from 870KB down to ~204KB).
+*   **Progressive Data Loading**: The application loads the active year's core dataset (`2025-26`) instantly for search readiness, while streaming in the remaining historical tables (`2024`, `2023`, `2022`) in background idle frames to prevent main-thread blockage.
+*   **WCAG AA Compliance**: Fully optimized contrast variables (including primary red and muted text shades) designed to pass strict WCAG AA standards.
+*   **Zero External Blocking Scripts**: Completely removed bloated third-party scripts (like overlay widgets) to ensure a blistering PageSpeed performance score on mobile devices.
 
 ---
 
 ## 🌟 Core Features
 
 *   **Eligibility Classifications**: Color-coded probability ratings:
-    *   🟢 **Safe (75% – 99% chance)**: Percentile is 1.3+ above the predicted cutoff.
-    *   🟡 **Moderate (50% – 74% chance)**: Percentile is 0 to 1.3 above the predicted cutoff.
-    *   🟠 **Reach (15% – 49% chance)**: Percentile is 0 to 2.0 below the predicted cutoff.
-    *   🔴 **Unlikely (1% – 14% chance)**: Percentile is more than 2.0 below the predicted cutoff.
+    *   🟢 **Safe (75% – 99% chance)**: Student rank/percentile is 1.3+ above the predicted cutoff.
+    *   🟡 **Moderate (50% – 74% chance)**: Student rank/percentile is 0 to 1.3 above the predicted cutoff.
+    *   🟠 **Reach (15% – 49% chance)**: Student rank/percentile is 0 to 2.0 below the predicted cutoff.
+    *   🔴 **Unlikely (1% – 14% chance)**: Student rank/percentile is more than 2.0 below the predicted cutoff.
 *   **Seat Matrix Breakdown**: Visual mapping of seat types (General, Ladies, PWD, Defense, etc.) per branch.
 *   **Preference Builder & PDF Exporter**: Shortlist college-branch combinations to print a clean preference list for the official CET portal.
 
