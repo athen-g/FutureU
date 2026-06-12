@@ -82,7 +82,7 @@ export default function CollegesPage() {
   const [autonomyFilter, setAutonomyFilter] = useState('all')
   const [sortBy, setSortBy] = useState('dte_asc')
   const [page, setPage] = useState(1)
-  const { addToShortlist, removeFromShortlist, isShortlisted, isDataReady, loadAppData } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, isDataReady, loadAppData, dataVersion } = useApp()
 
   useEffect(() => {
     loadAppData()
@@ -90,7 +90,7 @@ export default function CollegesPage() {
 
   usePageTitle('College Directory — 350+ Engineering Colleges in Maharashtra')
 
-  const allColleges = useMemo(() => isDataReady ? getAllColleges() : [], [isDataReady])
+  const allColleges = useMemo(() => isDataReady ? getAllColleges() : [], [isDataReady, dataVersion])
 
   const types = useMemo(() => {
     const s = new Set(allColleges.map(c => normalizeStatus(c.status)).filter(Boolean))

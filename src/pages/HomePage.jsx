@@ -9,11 +9,11 @@ import { Link } from 'react-router-dom'
 import { useMeta } from '../hooks/useMeta'
 import './HomePage.css'
 
-const CATEGORIES = ['OPEN','OBC','SC','ST','SEBC','VJ','NT-B','NT-C','NT-D','EWS']
-const COLLEGE_TYPES = ['Government','Government Autonomous','Private','Private Autonomous','Aided','Deemed','University']
+const CATEGORIES = ['OPEN', 'OBC', 'SC', 'ST', 'SEBC', 'VJ', 'NT-B', 'NT-C', 'NT-D', 'EWS']
+const COLLEGE_TYPES = ['Government', 'Government Autonomous', 'Private', 'Private Autonomous', 'Aided', 'Deemed', 'University']
 
 function ChanceBadge({ chance, status }) {
-  if (chance === null || chance === undefined || status === 'unknown') return <span style={{color:'var(--color-text-faint)'}}>—</span>
+  if (chance === null || chance === undefined || status === 'unknown') return <span style={{ color: 'var(--color-text-faint)' }}>—</span>
   return (
     <span className="chance-badge" style={{ background: eligibilityBg(status), color: eligibilityColor(status) }}>
       {chance}%
@@ -28,10 +28,10 @@ const ResultRow = memo(function ResultRow({ row, index, onShortlist, isShortlist
       <td className="col-college">
         <Link to={`/college/${row.collegeCode}`} className="college-link">
           {row.collegeName}
-          <ExternalLink size={12} className="ext-icon"/>
+          <ExternalLink size={12} className="ext-icon" />
         </Link>
         <div className="row-meta">
-          <span className="row-city"><MapPin size={11}/> {row.city || 'Maharashtra'}</span>
+          <span className="row-city"><MapPin size={11} /> {row.city || 'Maharashtra'}</span>
           <span className="row-type">{row.normalizedStatus}</span>
           {row.is_autonomous && <span className="row-auto">Autonomous</span>}
           <span className="row-code">DTE: {row.collegeCode}</span>
@@ -53,14 +53,14 @@ const ResultRow = memo(function ResultRow({ row, index, onShortlist, isShortlist
           </span>
         </div>
       </td>
-      <td className="col-chance"><ChanceBadge chance={row.admissionChance} status={row.eligibilityStatus}/></td>
+      <td className="col-chance"><ChanceBadge chance={row.admissionChance} status={row.eligibilityStatus} /></td>
       <td className="col-action">
         <button
           className={`heart-btn ${isShortlisted ? 'active' : ''}`}
           onClick={() => onShortlist(row)}
           aria-label="Toggle shortlist"
         >
-          <Heart size={15} fill={isShortlisted ? 'currentColor' : 'none'}/>
+          <Heart size={15} fill={isShortlisted ? 'currentColor' : 'none'} />
         </button>
       </td>
     </tr>
@@ -129,11 +129,21 @@ export default function HomePage() {
   const [calcPct, setCalcPct] = useState('')
   const [calcRank, setCalcRank] = useState('')
   const resultsRef = useRef(null)
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal, isDataReady, loadAppData } = useApp()
-  
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, openSupportModal, isDataReady, loadAppData, dataVersion } = useApp()
+
   useEffect(() => {
     loadAppData()
   }, [loadAppData])
+
+  useEffect(() => {
+    if (hasSearched && isDataReady) {
+      const mhRows = buildRankedList({ ...filters, type: 'mh' })
+      const jeeRows = (filters.jeePercentile || filters.jeeRank)
+        ? buildRankedList({ ...filters, percentile: filters.jeePercentile, rank: filters.jeeRank, type: 'ai' })
+        : []
+      setResults({ mh: mhRows, ai: jeeRows })
+    }
+  }, [dataVersion, isDataReady])
 
   useMeta(
     'College Recommendations',
@@ -145,8 +155,8 @@ export default function HomePage() {
     ...f, [k]: f[k].includes(v) ? f[k].filter(x => x !== v) : [...f[k], v]
   })), [])
 
-  const allBranches = useMemo(() => isDataReady ? getAllBranches() : [], [isDataReady])
-  const allCities = useMemo(() => isDataReady ? getAllCities() : [], [isDataReady])
+  const allBranches = useMemo(() => isDataReady ? getAllBranches() : [], [isDataReady, dataVersion])
+  const allCities = useMemo(() => isDataReady ? getAllCities() : [], [isDataReady, dataVersion])
 
   const estimatedRank = useMemo(() => {
     if (filters.percentile && !filters.rank) {
@@ -172,7 +182,7 @@ export default function HomePage() {
 
     setHasSearched(true)
     setIsSearching(true)
-    
+
     // Scroll to results section immediately to let user see the shimmering table skeleton
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
 
@@ -207,7 +217,7 @@ export default function HomePage() {
       sessionStorage.removeItem('futureu_tfws')
       sessionStorage.removeItem('futureu_ews')
       sessionStorage.removeItem('futureu_pwd')
-    } catch (e) {}
+    } catch (e) { }
     setFilters(INIT); setResults([]); setHasSearched(false)
     setVisibleCount(100)
   }
@@ -323,16 +333,16 @@ export default function HomePage() {
               <p className="panel-desc" style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>
                 Retrieve your official State CET Cell merit details automatically.
               </p>
-              
+
               <div className="autoload-content-layout">
                 {/* Active input for Examination ID */}
                 <div className="form-group autoload-id-group">
                   <label className="form-label">Examination Roll Number / Application ID</label>
                   <div style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="e.g. EN26102948" 
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. EN26102948"
                       defaultValue=""
                     />
                     <button className="btn btn-primary" onClick={(e) => e.preventDefault()} style={{ whiteSpace: 'nowrap' }}>
@@ -393,13 +403,13 @@ export default function HomePage() {
                   <label className="form-label">MHT-CET Percentile</label>
                   <input className="form-input" type="number" min="0" max="100" step="0.0001"
                     placeholder="Enter your percentile (0-100)"
-                    value={filters.percentile} onChange={e => set('percentile', e.target.value)}/>
+                    value={filters.percentile} onChange={e => set('percentile', e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">MHT-CET Rank</label>
                   <input className="form-input" type="number" min="1"
                     placeholder={estimatedRank ? `Est: ${estimatedRank}` : "Enter your rank"}
-                    value={filters.rank} onChange={e => set('rank', e.target.value)}/>
+                    value={filters.rank} onChange={e => set('rank', e.target.value)} />
                   {estimatedRank && (
                     <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
                       Rank calculated automatically: <strong>{estimatedRank}</strong> based on candidate inflation (you don't need to use the manual calculator).
@@ -414,17 +424,17 @@ export default function HomePage() {
                   <label className="form-label">JEE Percentile (Optional)</label>
                   <input className="form-input" type="number" min="0" max="100" step="0.0001"
                     placeholder="Enter your percentile (0-100)"
-                    value={filters.jeePercentile} onChange={e => set('jeePercentile', e.target.value)}/>
+                    value={filters.jeePercentile} onChange={e => set('jeePercentile', e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">JEE Rank (Optional)</label>
                   <input className="form-input" type="number" min="1"
                     placeholder="Enter your rank"
-                    value={filters.jeeRank} onChange={e => set('jeeRank', e.target.value)}/>
+                    value={filters.jeeRank} onChange={e => set('jeeRank', e.target.value)} />
                 </div>
               </div>
 
-              <div className="two-col" style={{marginTop:12}}>
+              <div className="two-col" style={{ marginTop: 12 }}>
                 <div className="form-group">
                   <label className="form-label">Gender</label>
                   <select className="form-input form-select" value={filters.gender} onChange={e => set('gender', e.target.value)}>
@@ -439,7 +449,7 @@ export default function HomePage() {
                   </select>
                 </div>
               </div>
-              <div className="two-col" style={{marginTop:8}}>
+              <div className="two-col" style={{ marginTop: 8 }}>
                 <div className="form-group">
                   <label className="form-label">EWS</label>
                   <select className="form-input form-select" value={filters.ews ? 'Yes' : 'No'}
@@ -458,15 +468,15 @@ export default function HomePage() {
 
               {/* Collapsible Calculator Widget */}
               <div className="calculator-widget" style={{ marginTop: '20px', borderTop: '1px solid var(--color-divider)', paddingTop: '16px' }}>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   onClick={(e) => { e.preventDefault(); setShowCalc(prev => !prev); }}
                   style={{ width: '100%', justifyContent: 'space-between', display: 'inline-flex' }}
                 >
                   <span>📊 Rank & Inflation Calculator</span>
                   <span>{showCalc ? '▲' : '▼'}</span>
                 </button>
-                
+
                 {showCalc && (
                   <div className="calculator-body" style={{ marginTop: '12px', background: 'var(--color-surface)', padding: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-divider)' }}>
                     <div className="form-group" style={{ marginBottom: '12px' }}>
@@ -474,9 +484,9 @@ export default function HomePage() {
                         <span>2026-27 Candidate Inflation Rate</span>
                         <strong>{filters.customInflationRate}%</strong>
                       </label>
-                      <input 
-                        type="range" min="10" max="40" step="0.1" 
-                        value={filters.customInflationRate} 
+                      <input
+                        type="range" min="10" max="40" step="0.1"
+                        value={filters.customInflationRate}
                         onChange={e => set('customInflationRate', parseFloat(e.target.value))}
                         style={{ width: '100%', accentColor: '#FF0000', cursor: 'pointer' }}
                       />
@@ -488,7 +498,7 @@ export default function HomePage() {
                     <div className="calc-converters" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                       <div className="form-group">
                         <label className="form-label">Percentile → Rank</label>
-                        <input 
+                        <input
                           type="number" className="form-input" placeholder="Percentile" min="0" max="100" step="0.0001"
                           value={calcPct} onChange={e => {
                             setCalcPct(e.target.value);
@@ -499,7 +509,7 @@ export default function HomePage() {
                       </div>
                       <div className="form-group">
                         <label className="form-label">Rank → Percentile</label>
-                        <input 
+                        <input
                           type="number" className="form-input" placeholder="Rank" min="1"
                           value={calcRank} onChange={e => {
                             setCalcRank(e.target.value);
@@ -552,7 +562,7 @@ export default function HomePage() {
                   <div className="chip-row">
                     {filters.preferredBranches.map(b => (
                       <span key={b} className="chip active" onClick={() => set('preferredBranches', filters.preferredBranches.filter(x => x !== b))}>
-                        {b.length > 30 ? b.slice(0,30)+'…' : b} ×
+                        {b.length > 30 ? b.slice(0, 30) + '…' : b} ×
                       </span>
                     ))}
                   </div>
@@ -564,7 +574,7 @@ export default function HomePage() {
                 <div className="checkbox-grid">
                   {COLLEGE_TYPES.map(t => (
                     <label key={t} className="checkbox-label">
-                      <input type="checkbox" checked={filters.collegeTypes.includes(t)} onChange={() => toggleArr('collegeTypes', t)} style={{accentColor:'#FF0000'}}/>
+                      <input type="checkbox" checked={filters.collegeTypes.includes(t)} onChange={() => toggleArr('collegeTypes', t)} style={{ accentColor: '#FF0000' }} />
                       {t}
                     </label>
                   ))}
@@ -590,7 +600,7 @@ export default function HomePage() {
               <div className="form-group">
                 <label className="form-label">Institute Autonomy</label>
                 <div className="toggle-group">
-                  {[['all','All'],['autonomous','Autonomous Only'],['non_autonomous','Non-Autonomous Only']].map(([val, lbl]) => (
+                  {[['all', 'All'], ['autonomous', 'Autonomous Only'], ['non_autonomous', 'Non-Autonomous Only']].map(([val, lbl]) => (
                     <button key={val} className={`toggle-btn ${filters.autonomy === val ? 'active' : ''}`}
                       onClick={() => set('autonomy', val)}>{lbl}</button>
                   ))}
@@ -601,10 +611,10 @@ export default function HomePage() {
 
           <div className="form-actions">
             <button className="btn btn-primary btn-lg" onClick={handleSearch}>
-              <Search size={17}/> Get My College Recommendations
+              <Search size={17} /> Get My College Recommendations
             </button>
             <button className="btn btn-secondary" onClick={handleReset}>
-              <RotateCcw size={15}/> Reset Form
+              <RotateCcw size={15} /> Reset Form
             </button>
           </div>
         </div>
@@ -627,7 +637,7 @@ export default function HomePage() {
                   </div>
                 )}
                 <button className="btn btn-primary btn-sm" onClick={handleDownloadPDF}>
-                  <Download size={14}/> Download PDF
+                  <Download size={14} /> Download PDF
                 </button>
               </div>
             </div>
@@ -635,7 +645,7 @@ export default function HomePage() {
             {isSearching ? (
               <>
                 <div className="results-info">
-                  <Info size={14}/>
+                  <Info size={14} />
                   <span>Admissions probability analyzer is preparing customized recommendations...</span>
                 </div>
 
@@ -665,15 +675,20 @@ export default function HomePage() {
               </div>
             ) : (
               <>
-                <div className="results-info">
-                  <Info size={14}/>
-                  <span>{currentRows.length} college-branch combinations found. Predicted cutoffs use historical CAP data.</span>
+                <div className="results-info" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Info size={14} />
+                    <span>{currentRows.length} college-branch combinations found. Predicted cutoffs use historical CAP data.</span>
+                  </div>
+                  <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)', marginLeft: '20px' }}>
+                    💡 <strong>Note on Probability:</strong> Ranks are highly dense at larger numbers. A 50-rank gap at a cutoff of 100 is extremely safe (50% seat buffer), whereas at 7,000 it is moderate (0.7% buffer). FutureU automatically applies dynamic curve leniency for top-percentile colleges.
+                  </span>
                 </div>
 
                 <div className="results-legend">
-                  {[['safe','Safe (3%+ above cutoff)'],['moderate','Moderate (0–3% above)'],['reach','Reach (0–2% below)'],['unlikely','Unlikely (2%+ below)']].map(([s,l]) => (
+                  {[['safe', 'Safe (3%+ above cutoff)'], ['moderate', 'Moderate (0–3% above)'], ['reach', 'Reach (0–2% below)'], ['unlikely', 'Unlikely (2%+ below)']].map(([s, l]) => (
                     <span key={s} className="legend-item">
-                      <span className="legend-dot" style={{background: eligibilityColor(s)}}/>
+                      <span className="legend-dot" style={{ background: eligibilityColor(s) }} />
                       {l}
                     </span>
                   ))}
@@ -715,10 +730,10 @@ export default function HomePage() {
                 <div className="results-bottom">
                   <div className="bottom-actions">
                     <button className="btn btn-primary" onClick={handleDownloadPDF}>
-                      <Download size={15}/> Download as PDF
+                      <Download size={15} /> Download as PDF
                     </button>
                     {shortlist.length > 0 && (
-                      <span className="shortlist-count"><Heart size={14} fill="#FF0000" color="#FF0000"/> {shortlist.length} saved</span>
+                      <span className="shortlist-count"><Heart size={14} fill="#FF0000" color="#FF0000" /> {shortlist.length} saved</span>
                     )}
                   </div>
                 </div>

@@ -4,6 +4,22 @@ All notable changes to **FutureU** will be documented in this file.
 
 ---
 
+## [v2.4.0] - 2026-06-12
+### Added
+- **Performance & PageSpeed Boost**: Implemented route-level code splitting using `React.lazy` and `React.Suspense` for all pages, slashing the initial entrypoint JavaScript bundle weight by **76.5%** (from 870KB down to 204KB).
+- **Progressive Data Loading**: Refactored the data loader to fetch active year data (`2025-26`) instantly, deferring historical years (`2024-25`, `2023-24`, `2022-23`) to load asynchronously in background idle cycles.
+- **Dynamic Context Updates**: Integrated a context `dataVersion` tracker to automatically update page-level memos and charts when historical loading completes.
+- **Lenient Top Percentile Matching**: Dynamic matching sigmoid exponent adjustment ($k = 7$ for cutoff ranks $< 1,000$, $k = 8.5$ for $< 5,000$, $k=10$ otherwise) to ensure top percentile predictions remain realistic.
+- **Rank Scale Callouts**: Added detailed callouts explaining rank scale density and cutoff sensitivity on the Homepage search alerts and How It Works page.
+
+### Changed
+- **Cutoff Prioritization**: Upgraded homepage searches to respect and prioritize specific reservation categories (OBC, EWS, TFWS, PWD) over general OPEN cutoffs.
+- **Search Sorting Order**: Recommendations list is now ordered by historical cutoff ranks (`previousRank`) from hardest to easiest for better reference.
+- **Visual Grid Improvements**: Redesigned the Landing Page features grid to display all items on a single row.
+- **Footer Theme Override**: Applied a consistent dark slate background theme (`#0c0d12`) to the global Footer component to resolve light-mode branding visibility.
+
+---
+
 ## [v2.3.0] - 2026-06-11
 ### Added
 - **Static Site Generation (SSG) Pre-rendering**: Created a custom postbuild Node script (`scripts/prerender.cjs`) to automatically pre-render specific `<title>`, Canonical links, Open Graph, and Twitter metadata tags into static `index.html` pages for all 368 colleges (located at `dist/college/[collegeCode]/index.html`), resolving client-side rendering preview limitations on WhatsApp and Telegram.

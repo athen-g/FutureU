@@ -1,20 +1,21 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
 import Navbar from './components/layout/Navbar'
 import SupportModal from './components/layout/SupportModal'
 import Footer from './components/layout/Footer'
-import LandingPage from './pages/LandingPage'
-import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
-import HowItWorksPage from './pages/HowItWorksPage'
-import CollegesPage from './pages/CollegesPage'
-import FAQPage from './pages/FAQPage'
-import CollegeDetailPage from './pages/CollegeDetailPage'
-import ChangeLogPage from './pages/ChangeLogPage'
-import HelpPage from './pages/HelpPage'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
+
+const LandingPage = lazy(() => import('./pages/LandingPage'))
+const HomePage = lazy(() => import('./pages/HomePage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'))
+const CollegesPage = lazy(() => import('./pages/CollegesPage'))
+const FAQPage = lazy(() => import('./pages/FAQPage'))
+const CollegeDetailPage = lazy(() => import('./pages/CollegeDetailPage'))
+const ChangeLogPage = lazy(() => import('./pages/ChangeLogPage'))
+const HelpPage = lazy(() => import('./pages/HelpPage'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -49,21 +50,32 @@ function Layout({ children }) {
   )
 }
 
+function RouteLoader() {
+  return (
+    <div className="route-loader">
+      <div className="route-spinner"></div>
+      <span>Loading Page...</span>
+    </div>
+  )
+}
+
 function AppRoutes() {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Layout><LandingPage /></Layout>} />
-        <Route path="/home" element={<Layout><HomePage /></Layout>} />
-        <Route path="/about" element={<Layout><AboutPage /></Layout>} />
-        <Route path="/how-it-works" element={<Layout><HowItWorksPage /></Layout>} />
-        <Route path="/colleges" element={<Layout><CollegesPage /></Layout>} />
-        <Route path="/faq" element={<Layout><FAQPage /></Layout>} />
-        <Route path="/changelog" element={<Layout><ChangeLogPage /></Layout>} />
-        <Route path="/help" element={<Layout><HelpPage /></Layout>} />
-        <Route path="/college/:collegeCode" element={<Layout><CollegeDetailPage /></Layout>} />
-      </Routes>
+      <Suspense fallback={<RouteLoader />}>
+        <Routes>
+          <Route path="/" element={<Layout><LandingPage /></Layout>} />
+          <Route path="/home" element={<Layout><HomePage /></Layout>} />
+          <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+          <Route path="/how-it-works" element={<Layout><HowItWorksPage /></Layout>} />
+          <Route path="/colleges" element={<Layout><CollegesPage /></Layout>} />
+          <Route path="/faq" element={<Layout><FAQPage /></Layout>} />
+          <Route path="/changelog" element={<Layout><ChangeLogPage /></Layout>} />
+          <Route path="/help" element={<Layout><HelpPage /></Layout>} />
+          <Route path="/college/:collegeCode" element={<Layout><CollegeDetailPage /></Layout>} />
+        </Routes>
+      </Suspense>
     </>
   )
 }

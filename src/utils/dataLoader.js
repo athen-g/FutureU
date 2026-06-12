@@ -153,7 +153,7 @@ function buildDataIndex(
   const index = {}
 
   // Seed from 2025-26 seat matrix (newest & most complete)
-  for (const college of (seatMatrix2025.colleges || [])) {
+  for (const college of (seatMatrix2025?.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
       index[cc] = {
@@ -183,7 +183,7 @@ function buildDataIndex(
   }
 
   // Seed from 2024-25 seat matrix (fallback)
-  for (const college of (seatMatrix2024.colleges || [])) {
+  for (const college of (seatMatrix2024?.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
       index[cc] = {
@@ -214,7 +214,7 @@ function buildDataIndex(
   }
 
   // Seed from 2023-24 seat matrix (fallback)
-  for (const college of (seatMatrix2023.colleges || [])) {
+  for (const college of (seatMatrix2023?.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
       index[cc] = {
@@ -242,7 +242,7 @@ function buildDataIndex(
   }
 
   // Seed from 2022-23 seat matrix (fallback)
-  for (const college of (seatMatrix2022.colleges || [])) {
+  for (const college of (seatMatrix2022?.colleges || [])) {
     const cc = migrateCode(college.college_code)
     if (!index[cc]) {
       index[cc] = {
@@ -271,6 +271,7 @@ function buildDataIndex(
 
   // Merge cutoffs helper
   function merge(cutoffData, year, cap, type) {
+    if (!cutoffData) return
     for (const college of (cutoffData.colleges || [])) {
       const cc = migrateCode(college.college_code)
       if (!index[cc]) {
@@ -348,15 +349,26 @@ function buildDataIndex(
 }
 
 let _idx = null
+let _stage1Data = null
+let _historyLoaded = false
+let _historyLoading = false
+let _callbacks = []
 
-export async function ensureDataLoaded() {
-  if (_idx) return _idx
+export async function ensureDataLoaded(onHistoryLoaded) {
+  if (onHistoryLoaded && !_historyLoaded) {
+    _callbacks.push(onHistoryLoaded)
+  }
 
+  if (_idx) {
+    if (_historyLoaded && onHistoryLoaded) {
+      onHistoryLoaded()
+    }
+    return _idx
+  }
+
+  // Load 2025-26 data immediately to make search recommendations interactive (Stage 1)
   const [
-    sm25, cap1_25, cap1Ai_25, cap2_25, cap2Ai_25, cap3_25, cap3Ai_25, cap4_25, cap4Ai_25,
-    sm24, cap1_24, cap1Ai_24, cap2_24, cap2Ai_24, cap3_24, cap3Ai_24, cap3Dip_24,
-    sm23, cap1_23, cap1Ai_23, cap2_23, cap2Ai_23, cap3_23, cap3Ai_23,
-    sm22, cap1_22, cap1Ai_22, cap2_22, cap2Ai_22, cap3_22, cap3Ai_22
+    sm25, cap1_25, cap1Ai_25, cap2_25, cap2Ai_25, cap3_25, cap3Ai_25, cap4_25, cap4Ai_25
   ] = await Promise.all([
     import('../data/2025-26/seat_matrix.json'),
     import('../data/2025-26/cap1/mh_cutoff.json'),
@@ -366,42 +378,94 @@ export async function ensureDataLoaded() {
     import('../data/2025-26/cap3/mh_cutoff.json'),
     import('../data/2025-26/cap3/ai_cutoff.json'),
     import('../data/2025-26/cap4/mh_cutoff.json'),
-    import('../data/2025-26/cap4/ai_cutoff.json'),
-    
-    import('../data/2024-25/seat_matrix.json'),
-    import('../data/2024-25/cap1/mh_cutoff.json'),
-    import('../data/2024-25/cap1/ai_cutoff.json'),
-    import('../data/2024-25/cap2/mh_cutoff.json'),
-    import('../data/2024-25/cap2/ai_cutoff.json'),
-    import('../data/2024-25/cap3/mh_cutoff.json'),
-    import('../data/2024-25/cap3/ai_cutoff.json'),
-    import('../data/2024-25/cap3/diploma_cutoff.json'),
-    
-    import('../data/2023-24/seat_matrix.json'),
-    import('../data/2023-24/cap1/mh_cutoff.json'),
-    import('../data/2023-24/cap1/ai_cutoff.json'),
-    import('../data/2023-24/cap2/mh_cutoff.json'),
-    import('../data/2023-24/cap2/ai_cutoff.json'),
-    import('../data/2023-24/cap3/mh_cutoff.json'),
-    import('../data/2023-24/cap3/ai_cutoff.json'),
-    
-    import('../data/2022-23/seat_matrix.json'),
-    import('../data/2022-23/cap1/mh_cutoff.json'),
-    import('../data/2022-23/cap1/ai_cutoff.json'),
-    import('../data/2022-23/cap2/mh_cutoff.json'),
-    import('../data/2022-23/cap2/ai_cutoff.json'),
-    import('../data/2022-23/cap3/mh_cutoff.json'),
-    import('../data/2022-23/cap3/ai_cutoff.json')
+    import('../data/2025-26/cap4/ai_cutoff.json')
   ])
 
+  _stage1Data = {
+    sm25: sm25.default, cap1_25: cap1_25.default, cap1Ai_25: cap1Ai_25.default,
+    cap2_25: cap2_25.default, cap2Ai_25: cap2Ai_25.default, cap3_25: cap3_25.default,
+    cap3Ai_25: cap3Ai_25.default, cap4_25: cap4_25.default, cap4Ai_25: cap4Ai_25.default
+  }
+
   _idx = buildDataIndex(
-    sm25.default, cap1_25.default, cap1Ai_25.default, cap2_25.default, cap2Ai_25.default, cap3_25.default, cap3Ai_25.default, cap4_25.default, cap4Ai_25.default,
-    sm24.default, cap1_24.default, cap1Ai_24.default, cap2_24.default, cap2Ai_24.default, cap3_24.default, cap3Ai_24.default, cap3Dip_24.default,
-    sm23.default, cap1_23.default, cap1Ai_23.default, cap2_23.default, cap2Ai_23.default, cap3_23.default, cap3Ai_23.default,
-    sm22.default, cap1_22.default, cap1Ai_22.default, cap2_22.default, cap2Ai_22.default, cap3_22.default, cap3Ai_22.default
+    _stage1Data.sm25, _stage1Data.cap1_25, _stage1Data.cap1Ai_25, _stage1Data.cap2_25, _stage1Data.cap2Ai_25, _stage1Data.cap3_25, _stage1Data.cap3Ai_25, _stage1Data.cap4_25, _stage1Data.cap4Ai_25,
+    null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null
   )
 
+  // Trigger Stage 2 asynchronous history load
+  triggerBackgroundHistoryLoad()
+
   return _idx
+}
+
+function triggerBackgroundHistoryLoad() {
+  if (_historyLoading || _historyLoaded) return
+  _historyLoading = true
+
+  const runLoad = async () => {
+    try {
+      const [
+        sm24, cap1_24, cap1Ai_24, cap2_24, cap2Ai_24, cap3_24, cap3Ai_24, cap3Dip_24,
+        sm23, cap1_23, cap1Ai_23, cap2_23, cap2Ai_23, cap3_23, cap3Ai_23,
+        sm22, cap1_22, cap1Ai_22, cap2_22, cap2Ai_22, cap3_22, cap3Ai_22
+      ] = await Promise.all([
+        import('../data/2024-25/seat_matrix.json'),
+        import('../data/2024-25/cap1/mh_cutoff.json'),
+        import('../data/2024-25/cap1/ai_cutoff.json'),
+        import('../data/2024-25/cap2/mh_cutoff.json'),
+        import('../data/2024-25/cap2/ai_cutoff.json'),
+        import('../data/2024-25/cap3/mh_cutoff.json'),
+        import('../data/2024-25/cap3/ai_cutoff.json'),
+        import('../data/2024-25/cap3/diploma_cutoff.json'),
+        
+        import('../data/2023-24/seat_matrix.json'),
+        import('../data/2023-24/cap1/mh_cutoff.json'),
+        import('../data/2023-24/cap1/ai_cutoff.json'),
+        import('../data/2023-24/cap2/mh_cutoff.json'),
+        import('../data/2023-24/cap2/ai_cutoff.json'),
+        import('../data/2023-24/cap3/mh_cutoff.json'),
+        import('../data/2023-24/cap3/ai_cutoff.json'),
+        
+        import('../data/2022-23/seat_matrix.json'),
+        import('../data/2022-23/cap1/mh_cutoff.json'),
+        import('../data/2022-23/cap1/ai_cutoff.json'),
+        import('../data/2022-23/cap2/mh_cutoff.json'),
+        import('../data/2022-23/cap2/ai_cutoff.json'),
+        import('../data/2022-23/cap3/mh_cutoff.json'),
+        import('../data/2022-23/cap3/ai_cutoff.json')
+      ])
+
+      const fullIndex = buildDataIndex(
+        _stage1Data.sm25, _stage1Data.cap1_25, _stage1Data.cap1Ai_25, _stage1Data.cap2_25, _stage1Data.cap2Ai_25, _stage1Data.cap3_25, _stage1Data.cap3Ai_25, _stage1Data.cap4_25, _stage1Data.cap4Ai_25,
+        sm24.default, cap1_24.default, cap1Ai_24.default, cap2_24.default, cap2Ai_24.default, cap3_24.default, cap3Ai_24.default, cap3Dip_24.default,
+        sm23.default, cap1_23.default, cap1Ai_23.default, cap2_23.default, cap2Ai_23.default, cap3_23.default, cap3Ai_23.default,
+        sm22.default, cap1_22.default, cap1Ai_22.default, cap2_22.default, cap2Ai_22.default, cap3_22.default, cap3Ai_22.default
+      )
+
+      // Merge new data structures into existing _idx object in-place to keep references intact
+      Object.assign(_idx, fullIndex)
+      _historyLoaded = true
+
+      // Notify any listeners
+      _callbacks.forEach(cb => {
+        try { cb() } catch (err) { console.error('Error firing data load callback:', err) }
+      })
+      _callbacks = []
+    } catch (err) {
+      console.error('Failed to load historical data in background:', err)
+      _historyLoading = false
+    }
+  }
+
+  if (typeof window !== 'undefined' && window.requestIdleCallback) {
+    window.requestIdleCallback(() => {
+      setTimeout(runLoad, 500)
+    })
+  } else {
+    setTimeout(runLoad, 1200)
+  }
 }
 
 export function getDataIndex() {

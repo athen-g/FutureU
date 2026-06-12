@@ -4,6 +4,26 @@ import './ChangeLogPage.css'
 
 const CHANGELOG_DATA = [
   {
+    version: 'v2.4.0',
+    date: '2026-06-12',
+    description: 'Performance Optimizations, Prioritized Category Search & Curve Leniency',
+    changes: {
+      added: [
+        'Performance & PageSpeed Boost: Implemented route-level code splitting using React.lazy and React.Suspense for all pages, slashing the initial entrypoint JavaScript bundle weight by 76.5% (from 870KB down to 204KB).',
+        'Progressive Data Loading: Refactored the data loader to fetch active year data (2025-26) instantly, deferring historical years (2024-25, 2023-24, 2022-23) to load asynchronously in background idle cycles.',
+        'Dynamic Context Updates: Integrated a context dataVersion tracker to automatically update page-level memos and charts when historical loading completes.',
+        'Lenient Top Percentile Matching: Dynamic matching sigmoid matching exponent adjustment (k = 7 for cutoff ranks < 1,000, k = 8.5 for < 5,000, k=10 otherwise) to ensure top percentile predictions remain realistic.',
+        'Rank Scale Callouts: Added detailed callouts explaining rank scale density and cutoff sensitivity on the Homepage search alerts and How It Works page.'
+      ],
+      changed: [
+        'Cutoff Prioritization: Upgraded homepage searches to respect and prioritize specific reservation categories (OBC, EWS, TFWS, PWD) over general OPEN cutoffs.',
+        'Search Sorting Order: Recommendations list is now ordered by historical cutoff ranks (previousRank) from hardest to easiest for better reference.',
+        'Visual Grid Improvements: Redesigned the Landing Page features grid to display all items on a single row.',
+        'Footer Theme Override: Applied a consistent dark slate background theme (#0c0d12) to the global Footer component to resolve light-mode branding visibility.'
+      ]
+    }
+  },
+  {
     version: 'v2.3.0',
     date: '2026-06-11',
     description: 'Visual Layouts, Guide Timelines & SSG Pre-rendering',

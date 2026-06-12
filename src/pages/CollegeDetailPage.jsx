@@ -76,13 +76,13 @@ function SeatCell({ value, className }) {
 
 export default function CollegeDetailPage() {
   const { collegeCode } = useParams()
-  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, isDataReady, loadAppData } = useApp()
+  const { addToShortlist, removeFromShortlist, isShortlisted, shortlist, isDataReady, loadAppData, dataVersion } = useApp()
 
   useEffect(() => {
     loadAppData()
   }, [loadAppData])
 
-  const college = useMemo(() => isDataReady ? getCollege(collegeCode) : null, [collegeCode, isDataReady])
+  const college = useMemo(() => isDataReady ? getCollege(collegeCode) : null, [collegeCode, isDataReady, dataVersion])
   const [activeTab, setActiveTab] = useState(0)
   const [expandedBranch, setExpandedBranch] = useState(null)
 

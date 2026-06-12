@@ -88,6 +88,15 @@ export default function HowItWorksPage() {
             </div>
           </div>
 
+          <div className="sensitivity-callout" style={{ marginTop: '28px', padding: '20px', background: 'var(--color-surface-offset)', borderLeft: '4px solid var(--color-primary)', borderRadius: 'var(--radius-sm)' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 'bold', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              💡 Rank Scale & Cutoff Sensitivity
+            </h4>
+            <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.6', color: 'var(--color-text-muted)' }}>
+              Admission probability is highly non-linear depending on the rank scale. A difference of 50 ranks at a highly competitive cutoff of 100 represents a massive 50% shift in total seat capacity, making it a very safe buffer. Conversely, a difference of 50 ranks at a cutoff of 7,000 is less than 1% of capacity, meaning the candidates are much more dense and the chance is closer to a coin flip. To remain realistic, FutureU dynamically reduces the sigmoid exponent to be slightly more lenient for top percentiles (lower cutoff ranks).
+            </p>
+          </div>
+
           {/* Math Modeling Section */}
           <div className="math-modeling-section" style={{ marginTop: '56px' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '20px', letterSpacing: '-0.01em' }}>Prediction Model Mathematics</h3>
@@ -121,23 +130,30 @@ export default function HowItWorksPage() {
 
               <div className="math-card">
                 <h4>2. Sigmoid Power Curve Admission Chance</h4>
-                <p className="math-card-desc">Computes the admission allocation probability based on the ratio of candidate rank vs predicted cutoff rank:</p>
+                <p className="math-card-desc">Computes the admission allocation probability based on the ratio of candidate rank vs predicted cutoff rank using a dynamic exponent:</p>
                 <div className="math-equation">
-                  P(r, c) = 100 / (1 + (r / c)<sup>10</sup>)
+                  P(r, c) = 100 / (1 + (r / c)<sup>k</sup>)
                 </div>
                 <div className="math-legend">
                   <span><strong>P(r, c)</strong>: Admission Probability Percentage</span>
                   <span><strong>r</strong>: Student state merit rank</span>
                   <span><strong>c</strong>: Predicted cutoff rank (R<sub>pred</sub>)</span>
+                  <span><strong>k</strong>: Exponent scaled for competitive density (k = 7 for c &lt; 1,000, k = 8.5 for c &lt; 5,000, k = 10 otherwise)</span>
                 </div>
                 <div className="math-example-box" style={{ marginTop: '16px', padding: '12px', background: 'var(--color-surface-offset)', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid var(--color-primary)', fontSize: '12.5px', lineHeight: '1.5' }}>
                   <strong style={{ color: 'var(--color-text)', display: 'block', marginBottom: '4px' }}>Example Allocation Chances:</strong>
-                  For a predicted cutoff rank of <strong>5,000</strong>:
+                  For a predicted cutoff rank of <strong>5,000</strong> (k = 10):
                   <ul style={{ paddingLeft: '16px', margin: '4px 0 0', lineHeight: '1.4' }}>
                     <li><strong>Rank 5,000</strong> (100% match): 100 / (1 + 1<sup>10</sup>) = <strong>50% (Moderate)</strong></li>
                     <li><strong>Rank 4,000</strong> (20% better): 100 / (1 + 0.8<sup>10</sup>) &approx; <strong>90% (Safe)</strong></li>
                     <li><strong>Rank 6,000</strong> (20% worse): 100 / (1 + 1.2<sup>10</sup>) &approx; <strong>14% (Unlikely)</strong></li>
                   </ul>
+                  <div style={{ marginTop: '6px', borderTop: '1px solid var(--color-border)', paddingTop: '6px' }}>
+                    For a top-percentile predicted cutoff of <strong>500</strong> (k = 7, more lenient):
+                    <ul style={{ paddingLeft: '16px', margin: '4px 0 0', lineHeight: '1.4' }}>
+                      <li><strong>Rank 600</strong> (20% worse): 100 / (1 + 1.2<sup>7</sup>) &approx; <strong>22% (Reach)</strong> <span style={{ color: 'var(--color-text-muted)' }}>(vs 14% with k=10)</span></li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

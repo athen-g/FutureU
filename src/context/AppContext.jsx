@@ -9,12 +9,15 @@ export function AppProvider({ children }) {
   const [showSupportModal, setShowSupportModal] = useState(false)
   const [isDataReady, setIsDataReady] = useState(false)
   const [isDataLoading, setIsDataLoading] = useState(false)
+  const [dataVersion, setDataVersion] = useState(0)
 
   const loadAppData = useCallback(async () => {
     if (isDataReady || isDataLoading) return
     setIsDataLoading(true)
     try {
-      await ensureDataLoaded()
+      await ensureDataLoaded(() => {
+        setDataVersion(v => v + 1)
+      })
       setIsDataReady(true)
     } catch (err) {
       console.error('Failed to load application data:', err)
@@ -57,7 +60,7 @@ export function AppProvider({ children }) {
       theme, toggleTheme,
       shortlist, addToShortlist, removeFromShortlist, isShortlisted, clearShortlist,
       showSupportModal, openSupportModal, closeSupportModal,
-      isDataReady, isDataLoading, loadAppData
+      isDataReady, isDataLoading, loadAppData, dataVersion
     }}>
       {children}
     </AppContext.Provider>

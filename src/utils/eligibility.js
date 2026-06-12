@@ -64,7 +64,10 @@ export function calculateChance(studentRank, predictedCutoffRank) {
   if (isNaN(r) || isNaN(c) || c <= 0 || r <= 0) return null
   
   const ratio = r / c
-  const chance = 100 / (1 + Math.pow(ratio, 10))
+  // Dynamically adjust the power exponent: lower exponent means a gentler slope, 
+  // making probability predictions slightly more lenient for highly competitive (top percentile) colleges.
+  const power = c < 1000 ? 7 : (c < 5000 ? 8.5 : 10)
+  const chance = 100 / (1 + Math.pow(ratio, power))
   return Math.min(99, Math.max(1, Math.round(chance)))
 }
 
