@@ -27,6 +27,8 @@ function Layout({ children }) {
   const { showSupportModal, openSupportModal, closeSupportModal } = useApp()
 
   useEffect(() => {
+    if (window.self !== window.top) return
+
     const shown = sessionStorage.getItem('futureu_support_modal_shown')
     if (!shown) {
       const timer = setTimeout(() => {

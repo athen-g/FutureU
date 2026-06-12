@@ -6,6 +6,12 @@ import './SupportModal.css'
 export default function SupportModal({ onClose }) {
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (window.self !== window.top) {
+      onClose()
+    }
+  }, [onClose])
+
   const handleKofiClick = () => {
     window.open('https://ko-fi.com/athen_g', '_blank', 'noopener,noreferrer')
   }
