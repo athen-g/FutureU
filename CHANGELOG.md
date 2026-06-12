@@ -7,8 +7,13 @@ All notable changes to **FutureU** will be documented in this file.
 ## [v2.5.0] - 2026-06-12
 ### Added
 - **Asynchronous Font Preloading**: Optimized Google Fonts loading in `index.html` to preload font stylesheets and render them asynchronously, resolving swap-related layout shifts.
+- **MHT-CET Rank Range Column**: Added a dedicated "MHT-CET Rank Range" column/card next to the "MHT-CET Cutoff Range" card on the College Details page, displaying cutoff ranks for the selected reservation category.
+- **Developer Social & Feedback Extensions**: Integrated Instagram profile link with brand icon in a 2x2 grid on the About page, and added a minimalist Google Feedback Form call-to-action button in the "Our Mission" section.
 
 ### Changed
+- **Cutoff Directory Sorting**: Overhauled College Directory sorting to order colleges by the previous year's (`2025-26`) cutoff percentile of their highest branch under the `GOPENS` category (falling back if missing), correctly sorting top-tier colleges first when sorted High to Low.
+- **Dynamic Category Labels**: Configured stats card subtexts on the College Details page to dynamically reflect the selected reservation category name (e.g. `General OBC State Level %ile` / `General OBC State Level Rank`).
+- **Comprehensive USP README**: Refactored the repository `README.md` to detail FutureU's Unique Selling Propositions, client-side privacy architecture, logistic sigmoid curves, and dynamic top-percentile leniency scales.
 - **Accessibility Color Contrast**: Darkened the primary red color (`#D90000` from `#FF0000`) and the secondary text-muted color in `variables.css` to comply with WCAG AA accessibility standards.
 - **Mockup Design Contrast**: Darkened contrast colors of tags and labels in `LandingPage.css` inside the hero mockup card interface.
 - **Ko-fi Script Removal**: Deleted the resource-heavy, dynamic Ko-fi chat widget loader script from `SupportModal.jsx`, saving 2.2 seconds of main-thread execution time.
